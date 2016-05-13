@@ -1,4 +1,4 @@
-package com.dev.dita.daystarmemo.ui.welcome;
+package com.dev.dita.daystarmemo;
 
 import android.app.Application;
 
