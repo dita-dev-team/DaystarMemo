@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Daystar Memo</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="action_settings">Settings</string>
 </resources>
