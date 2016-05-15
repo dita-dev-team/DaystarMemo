@@ -6,12 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.dev.dita.daystarmemo.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class LoginFragment extends Fragment {
     @BindView(R.id.login_username)
@@ -36,8 +36,7 @@ public class LoginFragment extends Fragment {
         return view;
     }
 
-    @OnClick(R.id.login_submit_button)
     public void login(View view) {
-        System.out.println("Login button clicked");
+        Toast.makeText(getContext(), "Login button clicked", Toast.LENGTH_SHORT).show();
     }
 }

@@ -82,6 +82,7 @@
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
                         android:clickable="true"
+                        android:onClick="login"
                         android:text="Login" />
 
                     <Button

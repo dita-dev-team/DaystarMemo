@@ -10,6 +10,8 @@ import com.dev.dita.daystarmemo.R;
 
 public class WelcomeActivity extends AppCompatActivity {
 
+    private LoginFragment loginFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,5 +36,10 @@ public class WelcomeActivity extends AppCompatActivity {
         Fragment login = new LoginFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment, login).addToBackStack(null).commit();
+    }
+
+    public void login(View view) {
+        loginFragment = (LoginFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+        loginFragment.login(view);
     }
 }
