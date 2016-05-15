@@ -28,14 +28,20 @@ public class WelcomeActivity extends AppCompatActivity {
 
     public void showRegisterView(View view) {
         Fragment register = new RegisterFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment, register).addToBackStack(null).commit();
+        String name = register.getClass().getName();
+        if (!getSupportFragmentManager().popBackStackImmediate(name, 0)) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment, register).addToBackStack(name).commit();
+        }
     }
 
     public void showLoginView(View view) {
         Fragment login = new LoginFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment, login).addToBackStack(null).commit();
+        String name = login.getClass().getName();
+        if (!getSupportFragmentManager().popBackStackImmediate(name, 0)) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment, login).addToBackStack(name).commit();
+        }
     }
 
     public void login(View view) {
