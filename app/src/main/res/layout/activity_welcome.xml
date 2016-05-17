@@ -6,6 +6,13 @@
     android:fitsSystemWindows="true"
     tools:context="com.dev.dita.daystarmemo.ui.welcome.WelcomeActivity">
 
-    <include layout="@layout/content_welcome" />
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_animation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/content_welcome" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 
 </android.support.design.widget.CoordinatorLayout>

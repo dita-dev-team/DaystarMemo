@@ -69,7 +69,6 @@
                     android:layout_height="36dp"
                     android:clickable="true"
                     android:gravity="center"
-                    android:onClick="login"
                     android:text="Login" />
 
                 <TextView

@@ -81,7 +81,7 @@
                     android:layout_height="wrap_content">
 
                     <EditText
-                        android:id="@+id/register_pass1"
+                        android:id="@+id/register_pass_confirm"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Confirm Password"
@@ -91,17 +91,8 @@
 
                 </android.support.design.widget.TextInputLayout>
 
-
-                <Spinner
-                    android:id="@+id/user_type"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginTop="10dp"
-                    android:entries="@array/user_types" />
-
                 <Button
-                    android:id="@+id/register_button"
+                    android:id="@+id/register_submit_button"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
                     android:clickable="true"

@@ -3,21 +3,34 @@ package com.dev.dita.daystarmemo.ui.welcome;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.dev.dita.daystarmemo.R;
+import com.dev.dita.daystarmemo.controller.bus.UserBus;
+import com.dev.dita.daystarmemo.model.baas.User;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class WelcomeActivity extends AppCompatActivity {
 
-    private LoginFragment loginFragment;
+    SwipeRefreshLayout swipeRefreshLayout;
+
+    public void init() {
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_animation);
+        swipeRefreshLayout.setColorSchemeResources(R.color.baseColor1, R.color.baseColor2);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        //EventBus.getDefault().register(this);
-        //ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
+        init();
+        setAnimation(false);
+
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
 
         if (fragment == null) {
@@ -44,8 +57,31 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 
-    public void login(View view) {
-        loginFragment = (LoginFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-        loginFragment.login(view);
+    @Subscribe
+    public void onEvent(UserBus.LoginEvent loginEvent) {
+        setAnimation(true);
+        User.loginUser(loginEvent.username, loginEvent.password);
+    }
+
+    @Subscribe
+    public void onEvent(UserBus.RegisterEvent registerEvent) {
+        setAnimation(true);
+        User.createUser(registerEvent.username, registerEvent.email, registerEvent.password);
+    }
+
+    @Subscribe
+    public void onEvent(UserBus.Notify notify) {
+        setAnimation(false);
+    }
+
+    public void setAnimation(Boolean value) {
+        swipeRefreshLayout.setEnabled(value);
+        swipeRefreshLayout.setRefreshing(value);
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 }
