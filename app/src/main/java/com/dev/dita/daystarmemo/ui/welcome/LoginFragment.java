@@ -75,6 +75,7 @@ public class LoginFragment extends Fragment {
         } else {
             PrefSettings.setLoggedIn(getContext(), true);
             startActivity(new Intent(getContext(), MainActivity.class));
+            getActivity().finish();
         }
     }
 }
