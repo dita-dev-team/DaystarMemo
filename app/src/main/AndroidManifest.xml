@@ -14,6 +14,10 @@
         <activity
             android:name=".ui.welcome.WelcomeActivity"
             android:label="@string/title_activity_welcome"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

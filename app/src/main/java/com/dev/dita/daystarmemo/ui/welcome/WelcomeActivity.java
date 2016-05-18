@@ -9,27 +9,32 @@ import android.view.View;
 
 import com.dev.dita.daystarmemo.R;
 import com.dev.dita.daystarmemo.controller.bus.UserBus;
+import com.dev.dita.daystarmemo.controller.utils.UIUtils;
 import com.dev.dita.daystarmemo.model.baas.User;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class WelcomeActivity extends AppCompatActivity {
 
+    @BindView(R.id.welcome_refresh_animation)
     SwipeRefreshLayout swipeRefreshLayout;
 
     public void init() {
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_animation);
         swipeRefreshLayout.setColorSchemeResources(R.color.baseColor1, R.color.baseColor2);
+        UIUtils.setAnimation(swipeRefreshLayout, false);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+        ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         init();
-        setAnimation(false);
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
 
@@ -59,25 +64,21 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @Subscribe
     public void onEvent(UserBus.LoginEvent loginEvent) {
-        setAnimation(true);
+        UIUtils.setAnimation(swipeRefreshLayout, true);
         User.loginUser(loginEvent.username, loginEvent.password);
     }
 
     @Subscribe
     public void onEvent(UserBus.RegisterEvent registerEvent) {
-        setAnimation(true);
+        UIUtils.setAnimation(swipeRefreshLayout, true);
         User.createUser(registerEvent.username, registerEvent.email, registerEvent.password);
     }
 
     @Subscribe
     public void onEvent(UserBus.Notify notify) {
-        setAnimation(false);
+        UIUtils.setAnimation(swipeRefreshLayout, false);
     }
 
-    public void setAnimation(Boolean value) {
-        swipeRefreshLayout.setEnabled(value);
-        swipeRefreshLayout.setRefreshing(value);
-    }
 
     @Override
     protected void onDestroy() {

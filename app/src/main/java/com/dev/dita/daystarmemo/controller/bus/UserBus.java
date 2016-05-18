@@ -25,6 +25,11 @@ public class UserBus {
         public String message;
     }
 
+    public static class LogoutResult {
+        public Boolean error;
+        public String message;
+    }
+
     public static class RegisterEvent {
         public String username;
         public String email;

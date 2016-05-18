@@ -24,7 +24,7 @@ public class User {
             public void handle(BaasResult<BaasUser> baasResult) {
                 UserBus.LoginResult loginResult = new UserBus.LoginResult();
                 if (baasResult.isSuccess()) {
-
+                    loginResult.error = false;
                 } else {
                     loginResult.error = true;
                     try {
@@ -39,6 +39,28 @@ public class User {
                     baasResult.error().printStackTrace();
                 }
                 EventBus.getDefault().post(loginResult);
+            }
+        });
+    }
+
+    public static void logoutUser() {
+        BaasUser.current().logout(new BaasHandler<Void>() {
+            @Override
+            public void handle(BaasResult<Void> baasResult) {
+                UserBus.LogoutResult logoutResult = new UserBus.LogoutResult();
+                if (baasResult.isSuccess()) {
+                    logoutResult.error = false;
+                } else {
+                    logoutResult.error = true;
+                    try {
+                        throw baasResult.error();
+                    } catch (BaasException e) {
+                        if (e.getCause() instanceof UnknownHostException || e.getCause() instanceof SocketTimeoutException) {
+                            logoutResult.message = "Unable to connect";
+                        }
+                    }
+                }
+                EventBus.getDefault().post(logoutResult);
             }
         });
     }

@@ -2,12 +2,12 @@ package com.dev.dita.daystarmemo.ui.welcome;
 
 
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.dev.dita.daystarmemo.R;
@@ -26,13 +26,13 @@ import butterknife.OnClick;
  */
 public class RegisterFragment extends Fragment {
     @BindView(R.id.register_username)
-    EditText usernameTxt;
+    TextInputEditText usernameTxt;
     @BindView(R.id.register_email)
-    EditText emailTxt;
+    TextInputEditText emailTxt;
     @BindView(R.id.register_pass)
-    EditText passwordTxt;
+    TextInputEditText passwordTxt;
     @BindView(R.id.register_pass_confirm)
-    EditText passwordConfirmTxt;
+    TextInputEditText passwordConfirmTxt;
 
     String username;
     String email;

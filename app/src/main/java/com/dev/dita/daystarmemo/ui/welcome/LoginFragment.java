@@ -1,17 +1,20 @@
 package com.dev.dita.daystarmemo.ui.welcome;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 
+import com.dev.dita.daystarmemo.PrefSettings;
 import com.dev.dita.daystarmemo.R;
 import com.dev.dita.daystarmemo.controller.bus.UserBus;
 import com.dev.dita.daystarmemo.controller.utils.UIUtils;
+import com.dev.dita.daystarmemo.ui.main.MainActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -22,9 +25,9 @@ import butterknife.OnClick;
 
 public class LoginFragment extends Fragment {
     @BindView(R.id.login_username)
-    EditText usernameTxt;
+    TextInputEditText usernameTxt;
     @BindView(R.id.login_pass)
-    EditText passwordTxt;
+    TextInputEditText passwordTxt;
 
     String username;
     String password;
@@ -68,6 +71,9 @@ public class LoginFragment extends Fragment {
         EventBus.getDefault().post(new UserBus.Notify());
         if (loginResult.error) {
             Toast.makeText(getContext(), loginResult.message, Toast.LENGTH_LONG).show();
+        } else {
+            PrefSettings.setLoggedIn(getContext(), true);
+            startActivity(new Intent(getContext(), MainActivity.class));
         }
     }
 }
