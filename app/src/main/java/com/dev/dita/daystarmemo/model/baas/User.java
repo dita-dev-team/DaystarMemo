@@ -1,7 +1,6 @@
 package com.dev.dita.daystarmemo.model.baas;
 
-import android.util.Log;
-
+import com.baasbox.android.BaasException;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
@@ -9,6 +8,9 @@ import com.baasbox.android.json.JsonObject;
 import com.dev.dita.daystarmemo.controller.bus.UserBus;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 
 public class User {
     public static final String TAG = User.class.getName();
@@ -20,14 +22,23 @@ public class User {
         user.login(new BaasHandler<BaasUser>() {
             @Override
             public void handle(BaasResult<BaasUser> baasResult) {
+                UserBus.LoginResult loginResult = new UserBus.LoginResult();
                 if (baasResult.isSuccess()) {
 
                 } else {
-                    UserBus.LoginResult loginResult = new UserBus.LoginResult();
                     loginResult.error = true;
-                    loginResult.message = "Invalid username or password";
-                    EventBus.getDefault().post(loginResult);
+                    try {
+                        throw baasResult.error();
+                    } catch (BaasException e) {
+                        if (e.getCause() instanceof UnknownHostException || e.getCause() instanceof SocketTimeoutException) {
+                            loginResult.message = "Unable to connect";
+                        } else {
+                            loginResult.message = "Invalid username or password";
+                        }
+                    }
+                    baasResult.error().printStackTrace();
                 }
+                EventBus.getDefault().post(loginResult);
             }
         });
     }
@@ -42,15 +53,22 @@ public class User {
         user.signup(new BaasHandler<BaasUser>() {
             @Override
             public void handle(BaasResult<BaasUser> baasResult) {
+                UserBus.RegisterResult registerResult = new UserBus.RegisterResult();
                 if (baasResult.isSuccess()) {
 
                 } else {
-                    UserBus.RegisterResult registerResult = new UserBus.RegisterResult();
                     registerResult.error = true;
-                    registerResult.message = "Username already exists";
-                    EventBus.getDefault().post(registerResult);
-                    Log.e(TAG, baasResult.error().getMessage());
+                    try {
+                        throw baasResult.error();
+                    } catch (BaasException e) {
+                        if (e.getCause() instanceof UnknownHostException || e.getCause() instanceof SocketTimeoutException) {
+                            registerResult.message = "Unable to connect";
+                        } else {
+                            registerResult.message = "Username already exists";
+                        }
+                    }
                 }
+                EventBus.getDefault().post(registerResult);
             }
         });
     }

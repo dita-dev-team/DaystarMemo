@@ -10,6 +10,7 @@ public class MemoApp extends Application {
         super.onCreate();
         BaasBox.builder(this).setAuthentication(BaasBox.Config.AuthType.SESSION_TOKEN)
                 .setApiDomain("dita.dev.ngrok.io")
+                .setPort(80)
                 .setAppCode("1234567890")
                 .init();
     }

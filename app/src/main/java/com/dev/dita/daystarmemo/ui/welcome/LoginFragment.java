@@ -66,6 +66,12 @@ public class LoginFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroyView();
+    }
+
     @Subscribe
     public void onEvent(UserBus.LoginResult loginResult) {
         EventBus.getDefault().post(new UserBus.Notify());

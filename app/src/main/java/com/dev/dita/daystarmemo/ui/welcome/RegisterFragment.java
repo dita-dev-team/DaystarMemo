@@ -86,4 +86,9 @@ public class RegisterFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroyView();
+    }
 }

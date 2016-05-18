@@ -28,4 +28,6 @@ dependencies {
     compile 'com.android.support:support-v4:23.3.0'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.jakewharton:butterknife:8.0.1'
+    testCompile 'org.robolectric:robolectric:3.0'
+    testCompile 'com.jayway.android.robotium:robotium:5.5.4'
 }
