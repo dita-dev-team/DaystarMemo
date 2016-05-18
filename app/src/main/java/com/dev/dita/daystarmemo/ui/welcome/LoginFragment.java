@@ -55,6 +55,7 @@ public class LoginFragment extends Fragment {
     @OnClick(R.id.login_submit_button)
     public void login() {
         UIUtils.hideKeyboard(getActivity());
+        // Verify all input has been provided
         if (TextUtils.isEmpty(usernameTxt.getText().toString()) || TextUtils.isEmpty(passwordTxt.getText().toString())) {
             Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
@@ -62,7 +63,7 @@ public class LoginFragment extends Fragment {
 
         username = usernameTxt.getText().toString().trim();
         password = passwordTxt.getText().toString().trim();
-
+        // Post a login event
         EventBus.getDefault().post(new UserBus.LoginEvent(username, password));
     }
 

@@ -39,11 +39,13 @@ public class WelcomeActivity extends AppCompatActivity {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
 
         if (fragment == null) {
+            // Set WelcomeFragment as the active fragment
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment, new WelcomeFragment()).commit();
         }
     }
 
+    // Sets RegisterFragment as the active fragment
     public void showRegisterView(View view) {
         Fragment register = new RegisterFragment();
         String name = register.getClass().getName();
@@ -53,6 +55,7 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 
+    // Sets LoginFragment as the active fragment
     public void showLoginView(View view) {
         Fragment login = new LoginFragment();
         String name = login.getClass().getName();

@@ -61,6 +61,7 @@ public class RegisterFragment extends Fragment {
     @OnClick(R.id.register_submit_button)
     public void register() {
         UIUtils.hideKeyboard(getActivity());
+        // Verify all input has been provided
         if (TextUtils.isEmpty(usernameTxt.getText().toString()) ||
                 TextUtils.isEmpty(passwordTxt.getText().toString()) ||
                 TextUtils.isEmpty(passwordConfirmTxt.getText().toString()) ||
@@ -78,6 +79,7 @@ public class RegisterFragment extends Fragment {
         password = passwordTxt.getText().toString();
         email = emailTxt.getText().toString().trim();
 
+        // Post a register event
         EventBus.getDefault().post(new UserBus.RegisterEvent(username, email, password));
     }
 

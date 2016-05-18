@@ -1,6 +1,9 @@
 package com.dev.dita.daystarmemo.controller.bus;
 
 
+/**
+ * A class containing all classes used by the EventBus when dealing with a user
+ */
 public class UserBus {
     public static class LoginEvent {
         public String username;
