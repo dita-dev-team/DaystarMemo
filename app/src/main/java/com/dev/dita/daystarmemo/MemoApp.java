@@ -1,6 +1,8 @@
 package com.dev.dita.daystarmemo;
 
 import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDex;
 
 import com.baasbox.android.BaasBox;
 
@@ -13,5 +15,11 @@ public class MemoApp extends Application {
                 .setPort(80)
                 .setAppCode("1234567890")
                 .init();
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }
