@@ -12,19 +12,31 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.dev.dita.daystarmemo.PrefSettings;
 import com.dev.dita.daystarmemo.R;
+import com.dev.dita.daystarmemo.controller.bus.UserBus;
+import com.dev.dita.daystarmemo.controller.utils.ImageUtils;
+import com.dev.dita.daystarmemo.controller.utils.UIUtils;
 import com.dev.dita.daystarmemo.ui.customviews.CoordinatedCircularImageView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
+import butterknife.OnTextChanged;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -37,10 +49,26 @@ public class ProfileActivity extends AppCompatActivity {
     CoordinatedCircularImageView profileImage;
     @BindView(R.id.profile_edit)
     FloatingActionButton bottomSheetButton;
+    @BindView(R.id.profile_save_button)
+    Button saveButton;
+    @BindView(R.id.profile_name)
+    TextView nameTextView;
+    @BindView(R.id.profile_email)
+    TextView emailTextView;
+    @BindView(R.id.profile_edit_name)
+    TextInputEditText nameEditText;
+    @BindView(R.id.profile_edit_email)
+    TextInputEditText emailEditText;
+
 
     public void init() {
-
+        initBottomSheet();
+        loadProfile();
+        nameEditText.setText(nameTextView.getText());
+        emailEditText.setText(emailTextView.getText());
+        saveButton.setEnabled(false);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +78,7 @@ public class ProfileActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle("");
-        initBottomSheet();
+        init();
     }
 
     @Override
@@ -94,8 +122,23 @@ public class ProfileActivity extends AppCompatActivity {
         return true;
     }
 
+    @OnTextChanged(R.id.profile_edit_name)
+    public void nameChanged(CharSequence text) {
+        if (!text.equals(nameTextView.getText())) {
+            saveButton.setEnabled(true);
+        }
+    }
+
+    @OnTextChanged(R.id.profile_edit_email)
+    public void emailChanged(CharSequence text) {
+        if (!text.equals(emailTextView.getText())) {
+            saveButton.setEnabled(true);
+        }
+    }
+
     public void imageFromCamera(int resultCode, Intent data) {
         profileImage.setImageBitmap((Bitmap) data.getExtras().get("data"));
+        saveButton.setEnabled(true);
     }
 
     public void imageFromGallery(int resultCode, Intent data) {
@@ -106,21 +149,29 @@ public class ProfileActivity extends AppCompatActivity {
         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
         String filePath = cursor.getString(columnIndex);
         cursor.close();
+
         profileImage.setImageBitmap(BitmapFactory.decodeFile(filePath));
+        saveButton.setEnabled(true);
+    }
+
+    public void saveImage() {
+        profileImage.buildDrawingCache();
+        Bitmap bitmap = profileImage.getDrawingCache();
+        String image = ImageUtils.decodeBitmaptoString(bitmap);
+        PrefSettings.setValue(this, "image", image);
     }
 
     public void initBottomSheet() {
         View bottom = coordinatorLayout.findViewById(R.id.profile_bottom_sheet);
         final BottomSheetBehavior behavior = BottomSheetBehavior.from(bottom);
         behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
             }
         });
 
@@ -128,22 +179,39 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int state = behavior.getState();
-                switch (state) {
-                    case BottomSheetBehavior.STATE_COLLAPSED:
-                        behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                        break;
-                    case BottomSheetBehavior.STATE_DRAGGING:
-                        behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                        break;
-                    case BottomSheetBehavior.STATE_EXPANDED:
-                        behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        break;
-                    case BottomSheetBehavior.STATE_HIDDEN:
-                        behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        break;
-
-                }
+                if (state == BottomSheetBehavior.STATE_COLLAPSED || state == BottomSheetBehavior.STATE_DRAGGING) {
+                    behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                } else if (state == BottomSheetBehavior.STATE_EXPANDED || state == BottomSheetBehavior.STATE_HIDDEN) {
+                    UIUtils.hideKeyboard(ProfileActivity.this);
+                    behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
             }
         });
+    }
+
+    public void loadProfile() {
+        // load profile from settings
+        nameTextView.setText(PrefSettings.getValue(this, "name"));
+        emailTextView.setText(PrefSettings.getValue(this, "email"));
+        String image = PrefSettings.getValue(this, "image");
+        if (!TextUtils.isEmpty(image)) {
+            Bitmap bitmap = ImageUtils.decodeBitmapfromString(image);
+            if (bitmap != null) {
+                profileImage.setImageBitmap(bitmap);
+            }
+        }
+    }
+
+    @OnClick(R.id.profile_save_button)
+    public void saveProfile() {
+        // Save profile to settings
+        PrefSettings.setValue(this, "name", nameEditText.getText().toString());
+        PrefSettings.setValue(this, "email", emailEditText.getText().toString());
+        saveImage();
+
+        nameTextView.setText(nameEditText.getText().toString());
+        emailTextView.setText(emailEditText.getText().toString());
+        EventBus.getDefault().post(new UserBus.ProfileUpdatedEvent());
+        Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show();
     }
 }

@@ -16,4 +16,24 @@ public class PrefSettings {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         sp.edit().putBoolean(PREF_LOGGED_IN, newValue).apply();
     }
+
+    public static void setValue(final Context context, String key, String value) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        sp.edit().putString(key, value).apply();
+    }
+
+    public static String getValue(final Context context, String key) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getString(key, "");
+    }
+
+    public static boolean keyExists(final Context context, String key) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.contains(key);
+    }
+
+    public static void clear(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        sp.edit().clear().commit();
+    }
 }

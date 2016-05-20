@@ -61,4 +61,7 @@ public class UserBus {
 
     public static class Notify {
     }
+
+    public static class ProfileUpdatedEvent {
+    }
 }

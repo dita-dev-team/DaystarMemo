@@ -1,22 +1,29 @@
 package com.dev.dita.daystarmemo.ui.main;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baasbox.android.BaasUser;
 import com.dev.dita.daystarmemo.PrefSettings;
 import com.dev.dita.daystarmemo.R;
 import com.dev.dita.daystarmemo.controller.bus.UserBus;
+import com.dev.dita.daystarmemo.controller.utils.ImageUtils;
 import com.dev.dita.daystarmemo.controller.utils.UIUtils;
 import com.dev.dita.daystarmemo.model.baas.User;
 import com.dev.dita.daystarmemo.ui.profile.ProfileActivity;
@@ -32,6 +39,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    TextView userName;
+    TextView userEmail;
+    CircleImageView userImage;
+
     @BindView(R.id.main_refresh_animation)
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -43,13 +54,17 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
 
-        CircleImageView profileImage = (CircleImageView) headerView.findViewById(R.id.nav_profile_image);
-        profileImage.setOnClickListener(new View.OnClickListener() {
+        userImage = (CircleImageView) headerView.findViewById(R.id.nav_profile_image);
+        userImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
             }
         });
+
+        userName = (TextView) headerView.findViewById(R.id.nav_name);
+        userEmail = (TextView) headerView.findViewById(R.id.nav_email);
+        initUser();
     }
 
     @Override
@@ -138,8 +153,21 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         } else if (id == R.id.nav_logout) {
-            UIUtils.setAnimation(swipeRefreshLayout, true);
-            User.logoutUser();
+            // Show confirmation dialog to confirm logging out
+            new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Logging out")
+                    .setMessage("Are you sure?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            UIUtils.setAnimation(swipeRefreshLayout, true);
+                            User.logoutUser();
+                        }
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -159,9 +187,39 @@ public class MainActivity extends AppCompatActivity
         if (logoutResult.error) {
             Toast.makeText(this, "Unable to logout", Toast.LENGTH_SHORT).show();
         } else {
-            PrefSettings.setLoggedIn(this, false);
+            //PrefSettings.setLoggedIn(this, false);
+            PrefSettings.clear(this);
             startActivity(new Intent(this, WelcomeActivity.class));
             finish();
+        }
+    }
+
+    @Subscribe
+    public void onEvent(UserBus.ProfileUpdatedEvent profileUpdatedEvent) {
+        initUser();
+    }
+
+    public void initUser() {
+        // Set the default settings if none exist yet
+        if (!PrefSettings.keyExists(this, "username")) {
+            PrefSettings.setValue(this, "username", BaasUser.current().getName());
+            PrefSettings.setValue(this, "name", getString(R.string.default_name));
+            PrefSettings.setValue(this, "email", getString(R.string.default_email));
+            PrefSettings.setValue(this, "password", BaasUser.current().getPassword());
+            PrefSettings.setValue(this, "token", BaasUser.current().getToken());
+            PrefSettings.setValue(this, "image", "");
+        }
+
+        // Load the profile from setting
+        String name = PrefSettings.getValue(this, "name").equals("") ? PrefSettings.getValue(this, "username") : PrefSettings.getValue(this, "name");
+        userName.setText(name);
+        userEmail.setText(PrefSettings.getValue(this, "email"));
+        String imageSrc = PrefSettings.getValue(this, "image");
+        if (!TextUtils.isEmpty(imageSrc)) {
+            Bitmap image = ImageUtils.decodeBitmapfromString(imageSrc);
+            if (image != null) {
+                userImage.setImageBitmap(image);
+            }
         }
     }
 }
