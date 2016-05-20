@@ -8,10 +8,15 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.dev.dita.daystarmemo.R;
 import com.dev.dita.daystarmemo.ui.customviews.CoordinatedCircularImageView;
@@ -26,8 +31,12 @@ public class ProfileActivity extends AppCompatActivity {
     private static final int IMAGE_PICK = 1;
     private static final int IMAGE_CAPTURE = 2;
 
+    @BindView(R.id.profile_coordinator)
+    CoordinatorLayout coordinatorLayout;
     @BindView(R.id.profile_image)
     CoordinatedCircularImageView profileImage;
+    @BindView(R.id.profile_edit)
+    FloatingActionButton bottomSheetButton;
 
     public void init() {
 
@@ -41,6 +50,7 @@ public class ProfileActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle("");
+        initBottomSheet();
     }
 
     @Override
@@ -97,5 +107,43 @@ public class ProfileActivity extends AppCompatActivity {
         String filePath = cursor.getString(columnIndex);
         cursor.close();
         profileImage.setImageBitmap(BitmapFactory.decodeFile(filePath));
+    }
+
+    public void initBottomSheet() {
+        View bottom = coordinatorLayout.findViewById(R.id.profile_bottom_sheet);
+        final BottomSheetBehavior behavior = BottomSheetBehavior.from(bottom);
+        behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+
+        bottomSheetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int state = behavior.getState();
+                switch (state) {
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                        behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                        break;
+                    case BottomSheetBehavior.STATE_DRAGGING:
+                        behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                        break;
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        break;
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        break;
+
+                }
+            }
+        });
     }
 }

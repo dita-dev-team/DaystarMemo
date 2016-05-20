@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/profile_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -51,5 +52,59 @@
         app:civ_border_width="2dp"
         app:layout_anchor="@id/profile_app_bar"
         app:layout_anchorGravity="bottom|center_horizontal" />
+
+    <LinearLayout
+        android:id="@+id/profile_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/baseColor1"
+        android:orientation="vertical"
+        app:behavior_peekHeight="50dp"
+        app:layout_behavior="@string/bottom_sheet_behavior">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/profile_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Username"
+                android:imeOptions="actionNext"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/view2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/profile_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:imeOptions="actionNext"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/profile_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_edit"
+        app:layout_anchor="@id/profile_bottom_sheet"
+        app:layout_anchorGravity="right" />
+
 </android.support.design.widget.CoordinatorLayout>
 
