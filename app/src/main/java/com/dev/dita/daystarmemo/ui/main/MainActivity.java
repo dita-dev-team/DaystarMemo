@@ -36,16 +36,34 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ * The type Main activity.
+ */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    /**
+     * The User name.
+     */
     TextView userName;
+    /**
+     * The User email.
+     */
     TextView userEmail;
+    /**
+     * The User image.
+     */
     CircleImageView userImage;
 
+    /**
+     * The Swipe refresh layout.
+     */
     @BindView(R.id.main_refresh_animation)
     SwipeRefreshLayout swipeRefreshLayout;
 
+    /**
+     * Init.
+     */
     public void init() {
         swipeRefreshLayout.setColorSchemeResources(R.color.baseColor1, R.color.baseColor2);
         UIUtils.setAnimation(swipeRefreshLayout, false);
@@ -181,6 +199,11 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
+    /**
+     * On event.
+     *
+     * @param logoutResult the logout result
+     */
     @Subscribe
     public void onEvent(UserBus.LogoutResult logoutResult) {
         UIUtils.setAnimation(swipeRefreshLayout, false);
@@ -194,11 +217,19 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * On event.
+     *
+     * @param profileUpdatedEvent the profile updated event
+     */
     @Subscribe
     public void onEvent(UserBus.ProfileUpdatedEvent profileUpdatedEvent) {
         initUser();
     }
 
+    /**
+     * Init user.
+     */
     public void initUser() {
         // Set the default settings if none exist yet
         if (!PrefSettings.keyExists(this, "username")) {

@@ -18,11 +18,20 @@ import org.greenrobot.eventbus.Subscribe;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * The type Welcome activity.
+ */
 public class WelcomeActivity extends AppCompatActivity {
 
+    /**
+     * The Swipe refresh layout.
+     */
     @BindView(R.id.welcome_refresh_animation)
     SwipeRefreshLayout swipeRefreshLayout;
 
+    /**
+     * Init.
+     */
     public void init() {
         swipeRefreshLayout.setColorSchemeResources(R.color.baseColor1, R.color.baseColor2);
         UIUtils.setAnimation(swipeRefreshLayout, false);
@@ -45,7 +54,12 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 
-    // Sets RegisterFragment as the active fragment
+    /**
+     * Show register view.
+     *
+     * @param view the view
+     */
+// Sets RegisterFragment as the active fragment
     public void showRegisterView(View view) {
         Fragment register = new RegisterFragment();
         String name = register.getClass().getName();
@@ -55,7 +69,12 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 
-    // Sets LoginFragment as the active fragment
+    /**
+     * Show login view.
+     *
+     * @param view the view
+     */
+// Sets LoginFragment as the active fragment
     public void showLoginView(View view) {
         Fragment login = new LoginFragment();
         String name = login.getClass().getName();
@@ -65,18 +84,33 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * On event.
+     *
+     * @param loginEvent the login event
+     */
     @Subscribe
     public void onEvent(UserBus.LoginEvent loginEvent) {
         UIUtils.setAnimation(swipeRefreshLayout, true);
         User.loginUser(loginEvent.username, loginEvent.password);
     }
 
+    /**
+     * On event.
+     *
+     * @param registerEvent the register event
+     */
     @Subscribe
     public void onEvent(UserBus.RegisterEvent registerEvent) {
         UIUtils.setAnimation(swipeRefreshLayout, true);
         User.createUser(registerEvent.username, registerEvent.email, registerEvent.password);
     }
 
+    /**
+     * On event.
+     *
+     * @param notify the notify
+     */
     @Subscribe
     public void onEvent(UserBus.Notify notify) {
         UIUtils.setAnimation(swipeRefreshLayout, false);

@@ -7,8 +7,17 @@ import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
 
+/**
+ * The type Image utils.
+ */
 public class ImageUtils {
 
+    /**
+     * Decode bitmapfrom string bitmap.
+     *
+     * @param src the src
+     * @return the bitmap
+     */
     public static Bitmap decodeBitmapfromString(String src) {
         Bitmap bitmap;
         byte[] imageAsBytes = Base64.decode(src.getBytes(), Base64.DEFAULT);
@@ -16,6 +25,12 @@ public class ImageUtils {
         return bitmap;
     }
 
+    /**
+     * Decode bitmapto string string.
+     *
+     * @param bitmap the bitmap
+     * @return the string
+     */
     public static String decodeBitmaptoString(Bitmap bitmap) {
         String imageString;
         ByteArrayOutputStream stream = new ByteArrayOutputStream();

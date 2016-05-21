@@ -25,19 +25,43 @@ import butterknife.OnClick;
  * A simple {@link Fragment} subclass.
  */
 public class RegisterFragment extends Fragment {
+    /**
+     * The Username txt.
+     */
     @BindView(R.id.register_username)
     TextInputEditText usernameTxt;
+    /**
+     * The Email txt.
+     */
     @BindView(R.id.register_email)
     TextInputEditText emailTxt;
+    /**
+     * The Password txt.
+     */
     @BindView(R.id.register_pass)
     TextInputEditText passwordTxt;
+    /**
+     * The Password confirm txt.
+     */
     @BindView(R.id.register_pass_confirm)
     TextInputEditText passwordConfirmTxt;
 
+    /**
+     * The Username.
+     */
     String username;
+    /**
+     * The Email.
+     */
     String email;
+    /**
+     * The Password.
+     */
     String password;
 
+    /**
+     * Instantiates a new Register fragment.
+     */
     public RegisterFragment() {
         // Required empty public constructor
     }
@@ -58,6 +82,9 @@ public class RegisterFragment extends Fragment {
         super.onDestroyView();
     }
 
+    /**
+     * Register.
+     */
     @OnClick(R.id.register_submit_button)
     public void register() {
         UIUtils.hideKeyboard(getActivity());
@@ -83,6 +110,11 @@ public class RegisterFragment extends Fragment {
         EventBus.getDefault().post(new UserBus.RegisterEvent(username, email, password));
     }
 
+    /**
+     * On event.
+     *
+     * @param registerResult the register result
+     */
     @Subscribe
     public void onEvent(UserBus.RegisterResult registerResult) {
         EventBus.getDefault().post(new UserBus.Notify());

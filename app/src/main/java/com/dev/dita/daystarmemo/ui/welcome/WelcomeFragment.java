@@ -13,6 +13,9 @@ import com.dev.dita.daystarmemo.R;
  */
 public class WelcomeFragment extends Fragment {
 
+    /**
+     * Instantiates a new Welcome fragment.
+     */
     public WelcomeFragment() {
     }
 

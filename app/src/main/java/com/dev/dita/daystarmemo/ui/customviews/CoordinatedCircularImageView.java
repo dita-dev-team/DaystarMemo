@@ -30,18 +30,39 @@ public class CoordinatedCircularImageView extends CircleImageView {
     private boolean isHiding;
     private OnChangeVisibilityListener onChangeVisibilityListener;
 
+    /**
+     * Instantiates a new Coordinated circular image view.
+     *
+     * @param context the context
+     */
     public CoordinatedCircularImageView(Context context) {
         super(context);
     }
 
+    /**
+     * Instantiates a new Coordinated circular image view.
+     *
+     * @param context the context
+     * @param attrs   the attrs
+     */
     public CoordinatedCircularImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
+    /**
+     * Instantiates a new Coordinated circular image view.
+     *
+     * @param context  the context
+     * @param attrs    the attrs
+     * @param defStyle the def style
+     */
     public CoordinatedCircularImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
+    /**
+     * Hide.
+     */
     public void hide() {
         if (!this.isHiding && this.getVisibility() == VISIBLE) {
             if (ViewCompat.isLaidOut(this) && !this.isInEditMode()) {
@@ -66,6 +87,9 @@ public class CoordinatedCircularImageView extends CircleImageView {
         }
     }
 
+    /**
+     * Show.
+     */
     public void show() {
         if (this.getVisibility() != VISIBLE) {
             if (ViewCompat.isLaidOut(this) && !this.isInEditMode()) {
@@ -86,16 +110,33 @@ public class CoordinatedCircularImageView extends CircleImageView {
         }
     }
 
+    /**
+     * Sets on change visibility listener.
+     *
+     * @param onChangeVisibilityListener the on change visibility listener
+     */
     public void setOnChangeVisibilityListener(OnChangeVisibilityListener onChangeVisibilityListener) {
         this.onChangeVisibilityListener = onChangeVisibilityListener;
     }
 
+    /**
+     * The interface On change visibility listener.
+     */
     public interface OnChangeVisibilityListener {
+        /**
+         * On hide.
+         */
         void onHide();
 
+        /**
+         * On show.
+         */
         void onShow();
     }
 
+    /**
+     * The type Behavior.
+     */
     public static class Behavior extends android.support.design.widget.CoordinatorLayout.Behavior<CoordinatedCircularImageView> {
         private static final boolean SNACKBAR_BEHAVIOR_ENABLED;
 
@@ -105,6 +146,9 @@ public class CoordinatedCircularImageView extends CircleImageView {
 
         private Rect tempRect;
 
+        /**
+         * Instantiates a new Behavior.
+         */
         public Behavior() {
         }
 
@@ -242,19 +286,43 @@ public class CoordinatedCircularImageView extends CircleImageView {
 
         }
 
+        /**
+         * Instantiates a new View group utils.
+         */
         ViewGroupUtils() {
         }
 
+        /**
+         * Offset descendant rect.
+         *
+         * @param parent     the parent
+         * @param descendant the descendant
+         * @param rect       the rect
+         */
         static void offsetDescendantRect(ViewGroup parent, View descendant, Rect rect) {
             IMPL.offsetDescendantRect(parent, descendant, rect);
         }
 
+        /**
+         * Gets descendant rect.
+         *
+         * @param parent     the parent
+         * @param descendant the descendant
+         * @param out        the out
+         */
         static void getDescendantRect(ViewGroup parent, View descendant, Rect out) {
             out.set(0, 0, descendant.getWidth(), descendant.getHeight());
             offsetDescendantRect(parent, descendant, out);
         }
 
         private interface ViewGroupUtilsImpl {
+            /**
+             * Offset descendant rect.
+             *
+             * @param var1 the var 1
+             * @param var2 the var 2
+             * @param var3 the var 3
+             */
             void offsetDescendantRect(ViewGroup var1, View var2, Rect var3);
         }
 
@@ -282,9 +350,19 @@ public class CoordinatedCircularImageView extends CircleImageView {
         private static final ThreadLocal<RectF> sRectF = new ThreadLocal();
         private static final Matrix IDENTITY = new Matrix();
 
+        /**
+         * Instantiates a new View group utils honeycomb.
+         */
         ViewGroupUtilsHoneycomb() {
         }
 
+        /**
+         * Offset descendant rect.
+         *
+         * @param group the group
+         * @param child the child
+         * @param rect  the rect
+         */
         public static void offsetDescendantRect(ViewGroup group, View child, Rect rect) {
             Matrix m = sMatrix.get();
             if (m == null) {
@@ -305,6 +383,13 @@ public class CoordinatedCircularImageView extends CircleImageView {
             rect.set((int) (rectF.left + 0.5F), (int) (rectF.top + 0.5F), (int) (rectF.right + 0.5F), (int) (rectF.bottom + 0.5F));
         }
 
+        /**
+         * Offset descendant matrix.
+         *
+         * @param target the target
+         * @param view   the view
+         * @param m      the m
+         */
         static void offsetDescendantMatrix(ViewParent target, View view, Matrix m) {
             ViewParent parent = view.getParent();
             if (parent instanceof View && parent != target) {

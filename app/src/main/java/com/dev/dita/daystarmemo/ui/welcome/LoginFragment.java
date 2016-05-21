@@ -23,15 +23,33 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * The type Login fragment.
+ */
 public class LoginFragment extends Fragment {
+    /**
+     * The Username txt.
+     */
     @BindView(R.id.login_username)
     TextInputEditText usernameTxt;
+    /**
+     * The Password txt.
+     */
     @BindView(R.id.login_pass)
     TextInputEditText passwordTxt;
 
+    /**
+     * The Username.
+     */
     String username;
+    /**
+     * The Password.
+     */
     String password;
 
+    /**
+     * Instantiates a new Login fragment.
+     */
     public LoginFragment() {
         // Required empty public constructor
     }
@@ -52,6 +70,9 @@ public class LoginFragment extends Fragment {
         super.onDestroyView();
     }
 
+    /**
+     * Login.
+     */
     @OnClick(R.id.login_submit_button)
     public void login() {
         UIUtils.hideKeyboard(getActivity());
@@ -67,6 +88,11 @@ public class LoginFragment extends Fragment {
         EventBus.getDefault().post(new UserBus.LoginEvent(username, password));
     }
 
+    /**
+     * On event.
+     *
+     * @param loginResult the login result
+     */
     @Subscribe
     public void onEvent(UserBus.LoginResult loginResult) {
         EventBus.getDefault().post(new UserBus.Notify());

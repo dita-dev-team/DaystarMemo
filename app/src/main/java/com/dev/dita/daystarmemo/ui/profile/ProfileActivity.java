@@ -1,11 +1,13 @@
 package com.dev.dita.daystarmemo.ui.profile;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -38,29 +40,60 @@ import butterknife.OnClick;
 import butterknife.OnLongClick;
 import butterknife.OnTextChanged;
 
+/**
+ * The type Profile activity.
+ */
 public class ProfileActivity extends AppCompatActivity {
+
+    private final static String TAG = ProfileActivity.class.getName();
 
     private static final int IMAGE_PICK = 1;
     private static final int IMAGE_CAPTURE = 2;
-
+    /**
+     * The Coordinator layout.
+     */
     @BindView(R.id.profile_coordinator)
     CoordinatorLayout coordinatorLayout;
+    /**
+     * The Profile image.
+     */
     @BindView(R.id.profile_image)
     CoordinatedCircularImageView profileImage;
+    /**
+     * The Bottom sheet button.
+     */
     @BindView(R.id.profile_edit)
     FloatingActionButton bottomSheetButton;
+    /**
+     * The Save button.
+     */
     @BindView(R.id.profile_save_button)
     Button saveButton;
+    /**
+     * The Name text view.
+     */
     @BindView(R.id.profile_name)
     TextView nameTextView;
+    /**
+     * The Email text view.
+     */
     @BindView(R.id.profile_email)
     TextView emailTextView;
+    /**
+     * The Name edit text.
+     */
     @BindView(R.id.profile_edit_name)
     TextInputEditText nameEditText;
+    /**
+     * The Email edit text.
+     */
     @BindView(R.id.profile_edit_email)
     TextInputEditText emailEditText;
+    private Uri imageUri;
 
-
+    /**
+     * Init.
+     */
     public void init() {
         initBottomSheet();
         loadProfile();
@@ -108,12 +141,29 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Capture image.
+     */
     @OnClick(R.id.profile_image)
     public void captureImage() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            String filename = "profile_image";
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.TITLE, filename);
+            imageUri = getContentResolver().insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values
+            );
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        }
         startActivityForResult(intent, IMAGE_CAPTURE);
     }
 
+    /**
+     * Choose profile image boolean.
+     *
+     * @return the boolean
+     */
     @OnLongClick(R.id.profile_image)
     public boolean chooseProfileImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -122,6 +172,11 @@ public class ProfileActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Name changed.
+     *
+     * @param text the text
+     */
     @OnTextChanged(R.id.profile_edit_name)
     public void nameChanged(CharSequence text) {
         if (!text.equals(nameTextView.getText())) {
@@ -129,6 +184,11 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Email changed.
+     *
+     * @param text the text
+     */
     @OnTextChanged(R.id.profile_edit_email)
     public void emailChanged(CharSequence text) {
         if (!text.equals(emailTextView.getText())) {
@@ -136,11 +196,24 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Image from camera.
+     *
+     * @param resultCode the result code
+     * @param data       the data
+     */
     public void imageFromCamera(int resultCode, Intent data) {
+
         profileImage.setImageBitmap((Bitmap) data.getExtras().get("data"));
         saveButton.setEnabled(true);
     }
 
+    /**
+     * Image from gallery.
+     *
+     * @param resultCode the result code
+     * @param data       the data
+     */
     public void imageFromGallery(int resultCode, Intent data) {
         Uri selectedImage = data.getData();
         String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -154,6 +227,9 @@ public class ProfileActivity extends AppCompatActivity {
         saveButton.setEnabled(true);
     }
 
+    /**
+     * Save image.
+     */
     public void saveImage() {
         profileImage.buildDrawingCache();
         Bitmap bitmap = profileImage.getDrawingCache();
@@ -161,6 +237,9 @@ public class ProfileActivity extends AppCompatActivity {
         PrefSettings.setValue(this, "image", image);
     }
 
+    /**
+     * Init bottom sheet.
+     */
     public void initBottomSheet() {
         View bottom = coordinatorLayout.findViewById(R.id.profile_bottom_sheet);
         final BottomSheetBehavior behavior = BottomSheetBehavior.from(bottom);
@@ -189,6 +268,9 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Load profile.
+     */
     public void loadProfile() {
         // load profile from settings
         nameTextView.setText(PrefSettings.getValue(this, "name"));
@@ -202,6 +284,9 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Save profile.
+     */
     @OnClick(R.id.profile_save_button)
     public void saveProfile() {
         // Save profile to settings
