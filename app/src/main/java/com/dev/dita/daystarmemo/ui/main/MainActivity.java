@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baasbox.android.BaasUser;
+import com.baasbox.android.json.JsonObject;
 import com.dev.dita.daystarmemo.PrefSettings;
 import com.dev.dita.daystarmemo.R;
 import com.dev.dita.daystarmemo.controller.bus.UserBus;
@@ -173,7 +174,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_logout) {
             // Show confirmation dialog to confirm logging out
             new AlertDialog.Builder(this)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("Logging out")
                     .setMessage("Are you sure?")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -233,21 +233,21 @@ public class MainActivity extends AppCompatActivity
     public void initUser() {
         // Set the default settings if none exist yet
         if (!PrefSettings.keyExists(this, "username")) {
+            JsonObject details = BaasUser.current().getScope(BaasUser.Scope.FRIEND);
             PrefSettings.setValue(this, "username", BaasUser.current().getName());
-            PrefSettings.setValue(this, "name", getString(R.string.default_name));
-            PrefSettings.setValue(this, "email", getString(R.string.default_email));
+            PrefSettings.setValue(this, "name", details.getString("name", getString(R.string.default_name)));
+            PrefSettings.setValue(this, "email", details.getString("email", getString(R.string.default_email)));
             PrefSettings.setValue(this, "password", BaasUser.current().getPassword());
             PrefSettings.setValue(this, "token", BaasUser.current().getToken());
-            PrefSettings.setValue(this, "image", "");
+            PrefSettings.setValue(this, "image", details.getString("image", ""));
         }
 
         // Load the profile from setting
-        String name = PrefSettings.getValue(this, "name").equals("") ? PrefSettings.getValue(this, "username") : PrefSettings.getValue(this, "name");
-        userName.setText(name);
+        userName.setText(PrefSettings.getValue(this, "name"));
         userEmail.setText(PrefSettings.getValue(this, "email"));
         String imageSrc = PrefSettings.getValue(this, "image");
         if (!TextUtils.isEmpty(imageSrc)) {
-            Bitmap image = ImageUtils.decodeBitmapfromString(imageSrc);
+            Bitmap image = ImageUtils.decodeBitmapFromString(imageSrc);
             if (image != null) {
                 userImage.setImageBitmap(image);
             }

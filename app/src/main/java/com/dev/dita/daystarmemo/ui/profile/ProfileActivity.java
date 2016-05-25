@@ -2,6 +2,7 @@ package com.dev.dita.daystarmemo.ui.profile;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -16,23 +17,34 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.NavUtils;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baasbox.android.BaasUser;
 import com.dev.dita.daystarmemo.PrefSettings;
 import com.dev.dita.daystarmemo.R;
 import com.dev.dita.daystarmemo.controller.bus.UserBus;
 import com.dev.dita.daystarmemo.controller.utils.ImageUtils;
 import com.dev.dita.daystarmemo.controller.utils.UIUtils;
+import com.dev.dita.daystarmemo.model.baas.User;
 import com.dev.dita.daystarmemo.ui.customviews.CoordinatedCircularImageView;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,6 +61,9 @@ public class ProfileActivity extends AppCompatActivity {
 
     private static final int IMAGE_PICK = 1;
     private static final int IMAGE_CAPTURE = 2;
+
+    @BindView(R.id.profile_refresh_animation)
+    SwipeRefreshLayout swipeRefreshLayout;
     /**
      * The Coordinator layout.
      */
@@ -89,7 +104,9 @@ public class ProfileActivity extends AppCompatActivity {
      */
     @BindView(R.id.profile_edit_email)
     TextInputEditText emailEditText;
+
     private Uri imageUri;
+
 
     /**
      * Init.
@@ -100,12 +117,15 @@ public class ProfileActivity extends AppCompatActivity {
         nameEditText.setText(nameTextView.getText());
         emailEditText.setText(emailTextView.getText());
         saveButton.setEnabled(false);
+        swipeRefreshLayout.setColorSchemeResources(R.color.baseColor1, R.color.baseColor2);
+        UIUtils.setAnimation(swipeRefreshLayout, false);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        EventBus.getDefault().register(this);
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -139,6 +159,12 @@ public class ProfileActivity extends AppCompatActivity {
                     break;
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     /**
@@ -196,6 +222,42 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.change_password_button)
+    public void changePassword() {
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(16, 16, 16, 16);
+        final EditText oldEditText = new EditText(this);
+        oldEditText.setHint("Old Password");
+        oldEditText.setTextSize(16);
+        oldEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        final EditText newEditText = new EditText(this);
+        newEditText.setHint("New Password");
+        newEditText.setTextSize(16);
+        newEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        layout.addView(oldEditText);
+        layout.addView(newEditText);
+        new AlertDialog.Builder(this)
+                .setTitle("Change password")
+                .setView(layout)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String oldPassword = oldEditText.getText().toString();
+                        String newPassword = newEditText.getText().toString();
+                        if (!oldPassword.equals(BaasUser.current().getPassword())) {
+                            Toast.makeText(getApplicationContext(), "Old password doesn't match", Toast.LENGTH_SHORT).show();
+                            changePassword();
+                        } else {
+                            User.changePassword(newPassword);
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+
+    }
+
     /**
      * Image from camera.
      *
@@ -203,7 +265,6 @@ public class ProfileActivity extends AppCompatActivity {
      * @param data       the data
      */
     public void imageFromCamera(int resultCode, Intent data) {
-
         profileImage.setImageBitmap((Bitmap) data.getExtras().get("data"));
         saveButton.setEnabled(true);
     }
@@ -227,15 +288,6 @@ public class ProfileActivity extends AppCompatActivity {
         saveButton.setEnabled(true);
     }
 
-    /**
-     * Save image.
-     */
-    public void saveImage() {
-        profileImage.buildDrawingCache();
-        Bitmap bitmap = profileImage.getDrawingCache();
-        String image = ImageUtils.decodeBitmaptoString(bitmap);
-        PrefSettings.setValue(this, "image", image);
-    }
 
     /**
      * Init bottom sheet.
@@ -277,7 +329,7 @@ public class ProfileActivity extends AppCompatActivity {
         emailTextView.setText(PrefSettings.getValue(this, "email"));
         String image = PrefSettings.getValue(this, "image");
         if (!TextUtils.isEmpty(image)) {
-            Bitmap bitmap = ImageUtils.decodeBitmapfromString(image);
+            Bitmap bitmap = ImageUtils.decodeBitmapFromString(image);
             if (bitmap != null) {
                 profileImage.setImageBitmap(bitmap);
             }
@@ -289,14 +341,44 @@ public class ProfileActivity extends AppCompatActivity {
      */
     @OnClick(R.id.profile_save_button)
     public void saveProfile() {
-        // Save profile to settings
-        PrefSettings.setValue(this, "name", nameEditText.getText().toString());
-        PrefSettings.setValue(this, "email", emailEditText.getText().toString());
-        saveImage();
+        Map<String, String> details = new HashMap<>();
+        details.put("name", nameEditText.getText().toString());
+        details.put("email", emailEditText.getText().toString());
+        profileImage.buildDrawingCache();
+        Bitmap bitmap = profileImage.getDrawingCache();
+        details.put("image", ImageUtils.decodeBitmapToString(bitmap));
+        // Save profile to remote server
+        User.updateUserProfile(details);
+    }
 
-        nameTextView.setText(nameEditText.getText().toString());
-        emailTextView.setText(emailEditText.getText().toString());
-        EventBus.getDefault().post(new UserBus.ProfileUpdatedEvent());
-        Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show();
+    @Subscribe
+    public void onEvent(UserBus.ProfileUpdatedRemoteResult remoteResult) {
+        if (remoteResult.error) {
+            Toast.makeText(this, "Profile update failed", Toast.LENGTH_LONG).show();
+        } else {
+            // Save profile to settings
+            nameTextView.setText(nameEditText.getText().toString());
+            emailTextView.setText(emailEditText.getText().toString());
+            profileImage.buildDrawingCache();
+            Bitmap bitmap = profileImage.getDrawingCache();
+            String image = ImageUtils.decodeBitmapToString(bitmap);
+            PrefSettings.setValue(this, "image", image);
+            PrefSettings.setValue(this, "name", nameEditText.getText().toString());
+            PrefSettings.setValue(this, "email", emailEditText.getText().toString());
+            EventBus.getDefault().post(new UserBus.ProfileUpdatedEvent());
+            Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Subscribe
+    public void onEvent(UserBus.PasswordChangeResult changeResult) {
+        if (changeResult.error) {
+            Toast.makeText(this, "Unable to change password", Toast.LENGTH_LONG).show();
+        } else {
+            PrefSettings.setValue(this, "password", BaasUser.current().getPassword());
+            // login the user after password is changed to refresh token
+            User.loginUser(PrefSettings.getValue(this, "username"), PrefSettings.getValue(this, "password"));
+            Toast.makeText(this, "Password changed successfully", Toast.LENGTH_LONG).show();
+        }
     }
 }

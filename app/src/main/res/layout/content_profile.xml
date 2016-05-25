@@ -10,11 +10,17 @@
     tools:context="com.dev.dita.daystarmemo.ui.profile.ProfileActivity"
     tools:showIn="@layout/activity_profile">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:orientation="vertical">
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/profile_refresh_animation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></android.support.v4.widget.SwipeRefreshLayout>
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
@@ -64,23 +70,54 @@
                     android:layout_height="wrap_content"
                     android:text="@string/default_email" />
 
-                <!-- <TextView
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:layout_margin="@dimen/text_margin"
-                     android:text="@string/large_text" />-->
+                <Button
+                    android:id="@+id/profile_save_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="16dp"
+                    android:clickable="true"
+                    android:text="Save" />
+
             </LinearLayout>
 
 
         </android.support.v7.widget.CardView>
 
-        <Button
-            android:id="@+id/profile_save_button"
-            android:layout_width="wrap_content"
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:clickable="true"
-            android:text="Save" />
+            android:layout_margin="8dp"
+            app:cardElevation="8dp"
+            app:contentPadding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Account"
+                    android:textColor="@color/colorPrimary" />
+
+                <android.support.v4.widget.Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp" />
+
+                <Button
+                    android:id="@+id/change_password_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:text="Change password" />
+
+
+            </LinearLayout>
+
+
+        </android.support.v7.widget.CardView>
 
     </LinearLayout>
 

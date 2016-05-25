@@ -120,6 +120,9 @@ public class RegisterFragment extends Fragment {
         EventBus.getDefault().post(new UserBus.Notify());
         if (registerResult.error) {
             Toast.makeText(getContext(), registerResult.message, Toast.LENGTH_LONG).show();
+        } else {
+            ((WelcomeActivity) getActivity()).showLoginView(null);
+            Toast.makeText(getContext(), "Please login", Toast.LENGTH_LONG).show();
         }
     }
 }

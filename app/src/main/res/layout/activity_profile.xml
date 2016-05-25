@@ -9,6 +9,7 @@
     android:fitsSystemWindows="true"
     tools:context="com.dev.dita.daystarmemo.ui.profile.ProfileActivity">
 
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/profile_app_bar"
         android:layout_width="match_parent"
@@ -16,12 +17,14 @@
         android:fitsSystemWindows="true"
         android:theme="@style/AppTheme.AppBarOverlay">
 
+
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/profile_collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
 
             <ImageView
                 android:layout_width="match_parent"
@@ -38,8 +41,11 @@
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
+
         </android.support.design.widget.CollapsingToolbarLayout>
+
     </android.support.design.widget.AppBarLayout>
+
 
     <include layout="@layout/content_profile" />
 

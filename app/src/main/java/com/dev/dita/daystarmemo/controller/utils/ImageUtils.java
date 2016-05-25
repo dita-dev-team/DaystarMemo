@@ -13,12 +13,12 @@ import java.io.ByteArrayOutputStream;
 public class ImageUtils {
 
     /**
-     * Decode bitmapfrom string bitmap.
+     * Decode bitmap from string bitmap.
      *
      * @param src the src
      * @return the bitmap
      */
-    public static Bitmap decodeBitmapfromString(String src) {
+    public static Bitmap decodeBitmapFromString(String src) {
         Bitmap bitmap;
         byte[] imageAsBytes = Base64.decode(src.getBytes(), Base64.DEFAULT);
         bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
@@ -26,12 +26,12 @@ public class ImageUtils {
     }
 
     /**
-     * Decode bitmapto string string.
+     * Decode bitmap to string string.
      *
      * @param bitmap the bitmap
      * @return the string
      */
-    public static String decodeBitmaptoString(Bitmap bitmap) {
+    public static String decodeBitmapToString(Bitmap bitmap) {
         String imageString;
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);

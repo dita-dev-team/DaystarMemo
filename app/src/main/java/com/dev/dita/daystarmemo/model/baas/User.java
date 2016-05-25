@@ -1,9 +1,12 @@
 package com.dev.dita.daystarmemo.model.baas;
 
+import android.util.Log;
+
 import com.baasbox.android.BaasException;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
+import com.baasbox.android.json.JsonException;
 import com.baasbox.android.json.JsonObject;
 import com.dev.dita.daystarmemo.controller.bus.UserBus;
 
@@ -11,12 +14,16 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.Map;
 
 
 /**
  * A java class which handles all user-management related actions to and from the baas
  */
 public class User {
+    /**
+     * The constant TAG.
+     */
     public static final String TAG = User.class.getName();
 
 
@@ -41,7 +48,7 @@ public class User {
                     try {
                         throw baasResult.error();
                     } catch (BaasException e) {
-                        if (e.getCause() instanceof UnknownHostException || e.getCause() instanceof SocketTimeoutException) {
+                        if (e.getCause() instanceof UnknownHostException || e.getCause() instanceof SocketTimeoutException || e.getCause() instanceof JsonException) {
                             loginResult.message = "Unable to connect";
                         } else {
                             loginResult.message = "Invalid username or password";
@@ -70,7 +77,7 @@ public class User {
                     try {
                         throw baasResult.error();
                     } catch (BaasException e) {
-                        if (e.getCause() instanceof UnknownHostException || e.getCause() instanceof SocketTimeoutException) {
+                        if (e.getCause() instanceof UnknownHostException || e.getCause() instanceof SocketTimeoutException || e.getCause() instanceof JsonException) {
                             logoutResult.message = "Unable to connect";
                         }
                     }
@@ -100,13 +107,13 @@ public class User {
             public void handle(BaasResult<BaasUser> baasResult) {
                 UserBus.RegisterResult registerResult = new UserBus.RegisterResult();
                 if (baasResult.isSuccess()) {
-
+                    registerResult.error = false;
                 } else {
                     registerResult.error = true;
                     try {
                         throw baasResult.error();
                     } catch (BaasException e) {
-                        if (e.getCause() instanceof UnknownHostException || e.getCause() instanceof SocketTimeoutException) {
+                        if (e.getCause() instanceof UnknownHostException || e.getCause() instanceof SocketTimeoutException || e.getCause() instanceof JsonException) {
                             registerResult.message = "Unable to connect";
                         } else {
                             registerResult.message = "Username already exists";
@@ -117,4 +124,50 @@ public class User {
             }
         });
     }
+
+    /**
+     * Update user profile.
+     *
+     * @param details user profile details
+     */
+    public static void updateUserProfile(Map<String, String> details) {
+        BaasUser user = BaasUser.current();
+        for (Map.Entry<String, String> entry : details.entrySet()) {
+            user.getScope(BaasUser.Scope.FRIEND).put(entry.getKey(), entry.getValue());
+        }
+
+        user.save(new BaasHandler<BaasUser>() {
+            @Override
+            public void handle(BaasResult<BaasUser> baasResult) {
+                UserBus.ProfileUpdatedRemoteResult remoteResult = new UserBus.ProfileUpdatedRemoteResult();
+                if (baasResult.isSuccess()) {
+                    remoteResult.error = false;
+                } else {
+                    remoteResult.error = true;
+                    Log.e(TAG, remoteResult.message);
+                }
+                EventBus.getDefault().post(remoteResult);
+
+            }
+        });
+    }
+
+    /**
+     * Change user password
+     *
+     * @param newPassword new password to be set
+     */
+    public static void changePassword(String newPassword) {
+        BaasUser user = BaasUser.current();
+        user.changePassword(newPassword, new BaasHandler<Void>() {
+            @Override
+            public void handle(BaasResult<Void> baasResult) {
+                UserBus.PasswordChangeResult passwordResult = new UserBus.PasswordChangeResult();
+                passwordResult.error = !baasResult.isSuccess();
+                EventBus.getDefault().post(passwordResult);
+
+            }
+        });
+    }
+
 }

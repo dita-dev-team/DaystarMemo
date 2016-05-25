@@ -131,4 +131,13 @@ public class UserBus {
      */
     public static class ProfileUpdatedEvent {
     }
+
+    public static class ProfileUpdatedRemoteResult {
+        public Boolean error;
+        public String message;
+    }
+
+    public static class PasswordChangeResult {
+        public Boolean error;
+    }
 }
