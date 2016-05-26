@@ -14,6 +14,7 @@ public class MemoApp extends Application {
                 //.setApiDomain("dita.dev.ngrok.io")
                 //.setPort(80)
                 .setApiDomain("192.168.1.108")
+                .setSessionTokenExpires(false)
                 .setPort(9000)
                 .setAppCode("1234567890")
                 .init();

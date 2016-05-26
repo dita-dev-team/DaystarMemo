@@ -181,6 +181,7 @@ public class MainActivity extends AppCompatActivity
                         public void onClick(DialogInterface dialog, int which) {
                             UIUtils.setAnimation(swipeRefreshLayout, true);
                             User.logoutUser();
+
                         }
                     })
                     .setNegativeButton("No", null)

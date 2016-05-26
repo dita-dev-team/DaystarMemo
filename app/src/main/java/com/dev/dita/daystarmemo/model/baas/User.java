@@ -61,6 +61,22 @@ public class User {
         });
     }
 
+    public static Boolean refreshUser() {
+        final Boolean[] error = {false};
+        BaasUser.current().refresh(new BaasHandler<BaasUser>() {
+            @Override
+            public void handle(BaasResult<BaasUser> baasResult) {
+                if (baasResult.isSuccess()) {
+                } else {
+                    error[0] = true;
+                }
+
+            }
+        });
+
+        return error[0];
+    }
+
 
     /**
      * logout a user
@@ -75,10 +91,13 @@ public class User {
                 } else {
                     logoutResult.error = true;
                     try {
+                        baasResult.error().printStackTrace();
                         throw baasResult.error();
                     } catch (BaasException e) {
                         if (e.getCause() instanceof UnknownHostException || e.getCause() instanceof SocketTimeoutException || e.getCause() instanceof JsonException) {
                             logoutResult.message = "Unable to connect";
+                        } else if (e.getCause() instanceof NullPointerException) {
+                            logoutResult.message = "Session expired";
                         }
                     }
                 }
