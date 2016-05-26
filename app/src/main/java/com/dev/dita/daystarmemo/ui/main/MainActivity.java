@@ -179,8 +179,13 @@ public class MainActivity extends AppCompatActivity
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            UIUtils.setAnimation(swipeRefreshLayout, true);
-                            User.logoutUser();
+                            if (!User.refreshUser()) {
+                                UIUtils.setAnimation(swipeRefreshLayout, true);
+                                User.logoutUser();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Unable to logout", Toast.LENGTH_SHORT).show();
+                            }
+
                         }
                     })
                     .setNegativeButton("No", null)
