@@ -15,10 +15,13 @@ import com.dev.dita.daystarmemo.model.database.Memo;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnItemClick;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
 public class MemosActivity extends AppCompatActivity {
+    final String TAG = getClass().getName();
     @BindView(R.id.memos_empty)
     TextView empty;
     @BindView(R.id.memos_list_view)
@@ -27,11 +30,13 @@ public class MemosActivity extends AppCompatActivity {
     FloatingActionButton newMemoButton;
 
     private Realm realm;
+    private RealmResults<Memo> memos;
+    private MemosListAdapter adapter;
 
     public void init() {
         realm = Realm.getDefaultInstance();
-        RealmResults<Memo> memos = realm.where(Memo.class).findAllSorted("date");
-        MemosListAdapter adapter = new MemosListAdapter(this, memos);
+
+        adapter = new MemosListAdapter(this, null);
         memosListView.setAdapter(adapter);
         memosListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -48,9 +53,16 @@ public class MemosActivity extends AppCompatActivity {
 
             }
         });
-        empty.setVisibility((adapter.isEmpty()) ? View.VISIBLE : View.GONE);
-    }
+        memos = realm.where(Memo.class).equalTo("latest", true).findAllSortedAsync("date");
+        memos.addChangeListener(new RealmChangeListener<RealmResults<Memo>>() {
+            @Override
+            public void onChange(RealmResults<Memo> element) {
+                adapter.updateData(element);
+                empty.setVisibility((adapter.isEmpty()) ? View.VISIBLE : View.GONE);
+            }
+        });
 
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +78,7 @@ public class MemosActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        memos.removeChangeListeners();
         realm.close();
     }
 
@@ -73,5 +86,10 @@ public class MemosActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         NavUtils.navigateUpFromSameTask(this);
+    }
+
+    @OnItemClick(R.id.memos_list_view)
+    public void onItemClick(int position) {
+
     }
 }

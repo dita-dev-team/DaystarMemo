@@ -21,21 +21,20 @@ public class MemosListAdapter extends RealmBaseAdapter<Memo> implements ListAdap
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            convertView = inflater.inflate(R.layout.memos_list_item, parent, false);
-            String username = adapterData.get(position).sender.username;
-            String body = adapterData.get(position).body;
-            String date = DateUtils.dateToString(adapterData.get(position).date);
-            TextView usernameTextView = (TextView) convertView.findViewById(R.id.memo_list_username);
-            TextView bodyTextView = (TextView) convertView.findViewById(R.id.memo_list_details);
-            TextView dateTextView = (TextView) convertView.findViewById(R.id.memo_list_date);
-            usernameTextView.setText(username);
-            bodyTextView.setText(body);
-            dateTextView.setText(date);
-            if (adapterData.get(position).status.equals("unread")) {
-                dateTextView.setTextColor(context.getResources().getColor(R.color.baseColor1));
-                bodyTextView.setTextColor(context.getResources().getColor(R.color.baseColor1));
-            }
+        convertView = inflater.inflate(R.layout.memos_list_item, parent, false);
+        Memo memo = adapterData.get(position);
+        String username = memo.sender.username;
+        String body = memo.body;
+        String date = DateUtils.dateToString(memo.date);
+        TextView usernameTextView = (TextView) convertView.findViewById(R.id.memo_list_username);
+        TextView bodyTextView = (TextView) convertView.findViewById(R.id.memo_list_details);
+        TextView dateTextView = (TextView) convertView.findViewById(R.id.memo_list_date);
+        usernameTextView.setText(username);
+        bodyTextView.setText(body);
+        dateTextView.setText(date);
+        if (memo.status.equals("unread")) {
+            dateTextView.setTextColor(context.getResources().getColor(R.color.baseColor1));
+            bodyTextView.setTextColor(context.getResources().getColor(R.color.baseColor1));
         }
 
         return convertView;
