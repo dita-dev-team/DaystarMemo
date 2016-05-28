@@ -36,6 +36,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.dev.dita.daystarmemo.ui.main.MainActivity" />
         </activity>
+        <activity
+            android:name=".ui.memos.MemosActivity"
+            android:label="@string/title_activity_memos"
+            android:parentActivityName=".ui.main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.dev.dita.daystarmemo.ui.main.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

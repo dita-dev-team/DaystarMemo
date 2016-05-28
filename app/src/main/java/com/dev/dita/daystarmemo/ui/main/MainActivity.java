@@ -27,6 +27,7 @@ import com.dev.dita.daystarmemo.controller.bus.UserBus;
 import com.dev.dita.daystarmemo.controller.utils.ImageUtils;
 import com.dev.dita.daystarmemo.controller.utils.UIUtils;
 import com.dev.dita.daystarmemo.model.baas.User;
+import com.dev.dita.daystarmemo.ui.memos.MemosActivity;
 import com.dev.dita.daystarmemo.ui.profile.ProfileActivity;
 import com.dev.dita.daystarmemo.ui.welcome.WelcomeActivity;
 
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity
         userImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
             }
         });
 
@@ -159,8 +160,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
+        if (id == R.id.nav_memo) {
+            startActivity(new Intent(MainActivity.this, MemosActivity.class));
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -254,4 +255,5 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
 }
