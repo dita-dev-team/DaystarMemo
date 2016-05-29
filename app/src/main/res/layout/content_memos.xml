@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingBottom="2dp"
     android:paddingLeft="8dp"
     android:paddingRight="2dp"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingTop="2dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.dev.dita.daystarmemo.ui.memos.MemosActivity"
     tools:showIn="@layout/activity_memos">
@@ -15,7 +15,9 @@
     <ListView
         android:id="@+id/memos_list_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ListView>
+        android:layout_height="wrap_content"
+        android:divider="@drawable/memo_list_divider"
+        android:dividerHeight="1dp" />
 
     <TextView
         android:id="@+id/memos_empty"

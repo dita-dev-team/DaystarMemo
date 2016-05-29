@@ -1,5 +1,6 @@
 package com.dev.dita.daystarmemo.ui.memos;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NavUtils;
@@ -25,7 +26,7 @@ public class MemosActivity extends AppCompatActivity {
     @BindView(R.id.memos_empty)
     TextView empty;
     @BindView(R.id.memos_list_view)
-    ListView memosListView;
+    ListView listView;
     @BindView(R.id.memos_new_memo)
     FloatingActionButton newMemoButton;
 
@@ -37,8 +38,8 @@ public class MemosActivity extends AppCompatActivity {
         realm = Realm.getDefaultInstance();
 
         adapter = new MemosListAdapter(this, null);
-        memosListView.setAdapter(adapter);
-        memosListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+        listView.setAdapter(adapter);
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (scrollState == SCROLL_STATE_IDLE) {
@@ -76,6 +77,11 @@ public class MemosActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         memos.removeChangeListeners();
@@ -90,6 +96,10 @@ public class MemosActivity extends AppCompatActivity {
 
     @OnItemClick(R.id.memos_list_view)
     public void onItemClick(int position) {
-
+        Memo memo = adapter.getItem(position);
+        String username = memo.isMe ? memo.recipient.username : memo.sender.username;
+        Intent intent = new Intent(MemosActivity.this, MemosChatActivity.class);
+        intent.putExtra("username", username);
+        startActivity(intent);
     }
 }

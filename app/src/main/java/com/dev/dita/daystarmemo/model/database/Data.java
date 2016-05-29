@@ -54,18 +54,38 @@ public class Data {
                 String sentence = sentences[rand.nextInt(sentences.length)].trim();
                 realm.beginTransaction();
                 Memo memo = new Memo();
-                memo.sender = users.get(rand.nextInt(users.size()));
+                if (rand.nextBoolean()) {
+                    memo.isMe = true;
+                    memo.recipient = users.get(rand.nextInt(users.size()));
+                } else {
+                    memo.sender = users.get(rand.nextInt(users.size()));
+                }
+
                 memo.subject = word;
                 memo.body = sentence;
                 memo.status = status[rand.nextInt(status.length)];
                 memo.date = new Date();
-                if (memo.sender.memos.size() > 0) {
-                    Memo temp = memo.sender.memos.where().equalTo("latest", true).findFirst();
-                    temp.latest = false;
+
+                if (memo.isMe) {
+                    if (memo.recipient.memos.size() > 0) {
+                        Memo temp = memo.recipient.memos.where().equalTo("latest", true).findFirst();
+                        temp.latest = false;
+                    }
+                } else {
+                    if (memo.sender.memos.size() > 0) {
+                        Memo temp = memo.sender.memos.where().equalTo("latest", true).findFirst();
+                        temp.latest = false;
+                    }
                 }
+
                 memo.latest = true;
                 memo = realm.copyToRealm(memo);
-                memo.sender.memos.add(memo);
+                if (memo.isMe) {
+                    memo.recipient.memos.add(memo);
+                } else {
+                    memo.sender.memos.add(memo);
+                }
+
                 realm.commitTransaction();
             }
         }

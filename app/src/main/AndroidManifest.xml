@@ -45,6 +45,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.dev.dita.daystarmemo.ui.main.MainActivity" />
         </activity>
+        <activity
+            android:name=".ui.memos.MemosChatActivity"
+            android:label="@string/title_activity_memos_chat"
+            android:parentActivityName=".ui.memos.MemosActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.dev.dita.daystarmemo.ui.memos.MemosActivity" />
+        </activity>
     </application>
 
 </manifest>

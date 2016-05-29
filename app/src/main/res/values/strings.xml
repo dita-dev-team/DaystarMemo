@@ -110,5 +110,6 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="title_activity_memos">MemosActivity</string>
+    <string name="title_activity_memos_chat">MemosChatActivity</string>
     <!--Profile Activity -->
 </resources>
