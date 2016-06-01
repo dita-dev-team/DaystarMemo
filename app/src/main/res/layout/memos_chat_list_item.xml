@@ -3,11 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/memo_chat_item_user_image"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="5dp"
+        android:src="@drawable/default_profile" />
+
     <LinearLayout
         android:id="@+id/memo_chat_item_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/memo_chat_item_user_image"
         android:orientation="vertical">
 
         <LinearLayout
@@ -15,11 +24,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/memo_chat_item_background1"
-            android:gravity="right"
             android:orientation="vertical"
             android:padding="10dp">
 
-            <TextView
+            <hani.momanii.supernova_emoji_library.Helper.EmojiconTextView
                 android:id="@+id/memo_chat_item_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -30,7 +38,6 @@
             android:id="@+id/memo_chat_item_info"
             android:layout_width="wrap_content"
             android:layout_height="30sp"
-            android:layout_gravity="right"
             android:textColor="@android:color/darker_gray"
             android:textSize="12sp" />
     </LinearLayout>

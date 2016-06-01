@@ -1,6 +1,7 @@
 package com.dev.dita.daystarmemo.model.database;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.dev.dita.daystarmemo.R;
 
@@ -25,9 +26,9 @@ public class Data {
 
     public void fillData() {
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.deleteAll();
-        realm.commitTransaction();
+        //realm.beginTransaction();
+        //realm.deleteAll();
+        //realm.commitTransaction();
         if (realm.where(User.class).count() == 0) {
             for (int i = 0; i < 15; i++) {
                 String number = new Integer(i + 1).toString();
@@ -42,9 +43,10 @@ public class Data {
             }
         }
 
-        int count = (int) realm.where(Memo.class).count();
+        long count = realm.where(Memo.class).count();
         if (count < DATA_SIZE) {
-            int size = DATA_SIZE - count;
+            Log.i("TAG", String.valueOf(count));
+            int size = (int) (DATA_SIZE - count);
             String[] words = src.split(" ");
             String[] sentences = src.split("\n");
             Random rand = new Random();
@@ -52,44 +54,53 @@ public class Data {
             for (int i = 0; i < size; i++) {
                 String word = words[rand.nextInt(words.length)];
                 String sentence = sentences[rand.nextInt(sentences.length)].trim();
-                realm.beginTransaction();
-                Memo memo = new Memo();
+                User user = users.get(rand.nextInt(users.size()));
                 if (rand.nextBoolean()) {
-                    memo.isMe = true;
-                    memo.recipient = users.get(rand.nextInt(users.size()));
+                    sendMemo(realm, word, sentence, user);
                 } else {
-                    memo.sender = users.get(rand.nextInt(users.size()));
+                    receiveMemo(realm, word, sentence, user);
                 }
-
-                memo.subject = word;
-                memo.body = sentence;
-                memo.status = status[rand.nextInt(status.length)];
-                memo.date = new Date();
-
-                if (memo.isMe) {
-                    if (memo.recipient.memos.size() > 0) {
-                        Memo temp = memo.recipient.memos.where().equalTo("latest", true).findFirst();
-                        temp.latest = false;
-                    }
-                } else {
-                    if (memo.sender.memos.size() > 0) {
-                        Memo temp = memo.sender.memos.where().equalTo("latest", true).findFirst();
-                        temp.latest = false;
-                    }
-                }
-
-                memo.latest = true;
-                memo = realm.copyToRealm(memo);
-                if (memo.isMe) {
-                    memo.recipient.memos.add(memo);
-                } else {
-                    memo.sender.memos.add(memo);
-                }
-
-                realm.commitTransaction();
             }
+            count = realm.where(Memo.class).count();
+            Log.i("TAG", String.valueOf(count));
         }
         realm.close();
+    }
+
+    public void sendMemo(Realm realm, String subject, String body, User user) {
+        realm.beginTransaction();
+        Memo memo = new Memo();
+        memo.isMe = true;
+        memo.recipient = user;
+        if (memo.recipient.memos.size() > 0) {
+            Memo temp = memo.recipient.memos.where().equalTo("latest", true).findFirst();
+            temp.latest = false;
+        }
+        memo.latest = true;
+        memo.subject = subject;
+        memo.body = body;
+        memo.status = "toBeSent";
+        memo.date = new Date();
+        memo.recipient.memos.add(memo);
+        realm.commitTransaction();
+    }
+
+    public void receiveMemo(Realm realm, String subject, String body, User user) {
+        realm.beginTransaction();
+        Memo memo = new Memo();
+        memo.isMe = false;
+        memo.sender = user;
+        if (memo.sender.memos.size() > 0) {
+            Memo temp = memo.sender.memos.where().equalTo("latest", true).findFirst();
+            temp.latest = false;
+        }
+        memo.latest = true;
+        memo.subject = subject;
+        memo.body = body;
+        memo.status = status[new Random().nextInt(status.length)];
+        memo.date = new Date();
+        memo.sender.memos.add(memo);
+        realm.commitTransaction();
     }
 
 }

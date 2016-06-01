@@ -25,7 +25,7 @@ public class MemoApp extends Application {
 
         // Initialize database
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this).build();
-        Realm.deleteRealm(realmConfiguration);
+        //Realm.deleteRealm(realmConfiguration);
         Realm.setDefaultConfiguration(realmConfiguration);
 
         Data data = new Data(getApplicationContext());

@@ -2,10 +2,11 @@ package com.dev.dita.daystarmemo.ui.memos;
 
 
 import android.content.Context;
+import android.graphics.Color;
+import android.text.TextPaint;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.dev.dita.daystarmemo.R;
@@ -15,13 +16,20 @@ import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import hani.momanii.supernova_emoji_library.Helper.EmojiconTextView;
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
 
-public class MemosListAdapter extends RealmBaseAdapter<Memo> implements ListAdapter {
+public class MemosListAdapter extends RealmBaseAdapter<Memo> {
+
+    final Date NOW = new Date();
+    int color;
+    int defaultColor;
 
     public MemosListAdapter(Context context, OrderedRealmCollection<Memo> data) {
         super(context, data);
+        color = context.getResources().getColor(R.color.baseColor1);
+        defaultColor = Color.parseColor("#c4c4c4");
     }
 
     @Override
@@ -35,17 +43,29 @@ public class MemosListAdapter extends RealmBaseAdapter<Memo> implements ListAdap
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Memo memo = getItem(position);
+        Memo memo = adapterData.get(position);
         String username = memo.isMe ? memo.recipient.username : memo.sender.username;
         String body = memo.body;
-        String date = (String) DateUtils.getRelativeTimeSpanString(new Date().getTime(), memo.date.getTime(), DateUtils.DAY_IN_MILLIS);
+        String date = (String) DateUtils.getRelativeTimeSpanString(memo.date.getTime(), NOW.getTime(), DateUtils.DAY_IN_MILLIS);
+
+        // Truncate body text if its long than the max width
+        int maxWidth = parent.getWidth();
+        TextPaint textPaint = viewHolder.body.getPaint();
+        int chars = textPaint.breakText(body, true, maxWidth, null);
+        if (chars < body.length()) {
+            body = body.substring(0, chars);
+        }
 
         viewHolder.username.setText(username);
         viewHolder.body.setText(body);
         viewHolder.date.setText(date);
-        if (memo.status.equals("unread")) {
-            viewHolder.date.setTextColor(context.getResources().getColor(R.color.baseColor1));
-            viewHolder.body.setTextColor(context.getResources().getColor(R.color.baseColor1));
+
+        if (memo.status.equalsIgnoreCase("unread")) {
+            viewHolder.date.setTextColor(color);
+            viewHolder.body.setTextColor(color);
+        } else {
+            viewHolder.date.setTextColor(defaultColor);
+            viewHolder.body.setTextColor(defaultColor);
         }
 
         return convertView;
@@ -55,7 +75,7 @@ public class MemosListAdapter extends RealmBaseAdapter<Memo> implements ListAdap
         @BindView(R.id.memo_list_username)
         public TextView username;
         @BindView(R.id.memo_list_details)
-        public TextView body;
+        public EmojiconTextView body;
         @BindView(R.id.memo_list_date)
         public TextView date;
 

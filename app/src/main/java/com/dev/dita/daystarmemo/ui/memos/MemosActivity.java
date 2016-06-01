@@ -20,6 +20,7 @@ import butterknife.OnItemClick;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class MemosActivity extends AppCompatActivity {
     final String TAG = getClass().getName();
@@ -33,12 +34,21 @@ public class MemosActivity extends AppCompatActivity {
     private Realm realm;
     private RealmResults<Memo> memos;
     private MemosListAdapter adapter;
+    private RealmChangeListener listener = new RealmChangeListener() {
+        @Override
+        public void onChange(Object element) {
+            adapter.notifyDataSetChanged();
+        }
+    };
 
     public void init() {
         realm = Realm.getDefaultInstance();
-
-        adapter = new MemosListAdapter(this, null);
+        memos = realm.where(Memo.class).equalTo("latest", true).findAllSorted("date", Sort.DESCENDING);
+        memos.addChangeListener(listener);
+        adapter = new MemosListAdapter(this, memos);
+        //adapter = new TestAdapter(this, R.layout.memos_list_item, R.id.memo_list_username, memos.subList(0, memos.size()-1));
         listView.setAdapter(adapter);
+
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -54,15 +64,8 @@ public class MemosActivity extends AppCompatActivity {
 
             }
         });
-        memos = realm.where(Memo.class).equalTo("latest", true).findAllSortedAsync("date");
-        memos.addChangeListener(new RealmChangeListener<RealmResults<Memo>>() {
-            @Override
-            public void onChange(RealmResults<Memo> element) {
-                adapter.updateData(element);
-                empty.setVisibility((adapter.isEmpty()) ? View.VISIBLE : View.GONE);
-            }
-        });
 
+        empty.setVisibility(adapter.isEmpty() ? View.VISIBLE : View.GONE);
     }
 
     @Override

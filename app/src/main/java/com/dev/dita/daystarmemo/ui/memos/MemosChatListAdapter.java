@@ -2,6 +2,7 @@ package com.dev.dita.daystarmemo.ui.memos;
 
 import android.content.Context;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,10 +16,12 @@ import com.dev.dita.daystarmemo.model.database.Memo;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
 
 public class MemosChatListAdapter extends RealmBaseAdapter<Memo> {
+    final String TAG = getClass().getName();
     public MemosChatListAdapter(Context context, OrderedRealmCollection<Memo> data) {
         super(context, data);
     }
@@ -36,7 +39,8 @@ public class MemosChatListAdapter extends RealmBaseAdapter<Memo> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Memo memo = getItem(position);
+        Memo memo = adapterData.get(position);
+        Log.i("ChatLIst", memo.isMe.toString());
         setAlignment(viewHolder, memo.isMe);
         viewHolder.message.setText(memo.body);
         viewHolder.info.setText(DateUtils.formatDateTime(context, memo.date.getTime(), DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE));
@@ -47,41 +51,24 @@ public class MemosChatListAdapter extends RealmBaseAdapter<Memo> {
         if (!isMe) {
             holder.mainContent.setBackgroundResource(R.drawable.memo_chat_item_background1);
 
-            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.mainContent.getLayoutParams();
-            layoutParams.gravity = Gravity.LEFT;
-            holder.mainContent.setLayoutParams(layoutParams);
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) holder.image.getLayoutParams();
+            layoutParams.addRule(RelativeLayout.ALIGN_LEFT);
+            holder.image.setLayoutParams(layoutParams);
 
-            RelativeLayout.LayoutParams layoutParams1 = (RelativeLayout.LayoutParams) holder.content.getLayoutParams();
-            layoutParams1.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
-            layoutParams1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            holder.content.setLayoutParams(layoutParams1);
-
-            layoutParams = (LinearLayout.LayoutParams) holder.message.getLayoutParams();
-            layoutParams.gravity = Gravity.LEFT;
-            holder.message.setLayoutParams(layoutParams);
-
-            layoutParams = (LinearLayout.LayoutParams) holder.info.getLayoutParams();
-            layoutParams.gravity = Gravity.LEFT;
-            holder.info.setLayoutParams(layoutParams);
+            LinearLayout.LayoutParams layoutParams1 = (LinearLayout.LayoutParams) holder.info.getLayoutParams();
+            layoutParams1.gravity = Gravity.LEFT;
+            holder.info.setLayoutParams(layoutParams1);
         } else {
+            holder.image.setVisibility(View.GONE);
             holder.mainContent.setBackgroundResource(R.drawable.memo_chat_item_background2);
 
-            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.mainContent.getLayoutParams();
-            layoutParams.gravity = Gravity.RIGHT;
-            holder.mainContent.setLayoutParams(layoutParams);
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) holder.content.getLayoutParams();
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            holder.content.setLayoutParams(layoutParams);
 
-            RelativeLayout.LayoutParams layoutParams1 = (RelativeLayout.LayoutParams) holder.content.getLayoutParams();
-            layoutParams1.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
-            layoutParams1.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            holder.content.setLayoutParams(layoutParams1);
-
-            layoutParams = (LinearLayout.LayoutParams) holder.message.getLayoutParams();
-            layoutParams.gravity = Gravity.RIGHT;
-            holder.message.setLayoutParams(layoutParams);
-
-            layoutParams = (LinearLayout.LayoutParams) holder.info.getLayoutParams();
-            layoutParams.gravity = Gravity.RIGHT;
-            holder.info.setLayoutParams(layoutParams);
+            LinearLayout.LayoutParams layoutParams1 = (LinearLayout.LayoutParams) holder.info.getLayoutParams();
+            layoutParams1.gravity = Gravity.RIGHT;
+            holder.info.setLayoutParams(layoutParams1);
         }
     }
 
@@ -94,6 +81,8 @@ public class MemosChatListAdapter extends RealmBaseAdapter<Memo> {
         public LinearLayout content;
         @BindView(R.id.memo_chat_item_main_content)
         public LinearLayout mainContent;
+        @BindView(R.id.memo_chat_item_user_image)
+        CircleImageView image;
 
         public ViewHolder(View view) {
             ButterKnife.bind(this, view);
