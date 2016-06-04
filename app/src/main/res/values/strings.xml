@@ -111,5 +111,6 @@
     </string>
     <string name="title_activity_memos">MemosActivity</string>
     <string name="title_activity_memos_chat">MemosChatActivity</string>
+    <string name="title_activity_new_memo">NewMemoActivity</string>
     <!--Profile Activity -->
 </resources>

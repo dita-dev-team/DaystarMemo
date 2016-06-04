@@ -1,12 +1,15 @@
 package com.dev.dita.daystarmemo.model.database;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.dev.dita.daystarmemo.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import io.realm.Realm;
@@ -48,12 +51,18 @@ public class Data {
             Log.i("TAG", String.valueOf(count));
             int size = (int) (DATA_SIZE - count);
             String[] words = src.split(" ");
-            String[] sentences = src.split("\n");
+            List<String> sentences = new ArrayList<>(Arrays.asList(src.split("\n")));
+            for (int i = 0; i < sentences.size(); i++) {
+                String s = sentences.get(i).trim();
+                if (TextUtils.isEmpty(s)) {
+                    sentences.remove(i);
+                }
+            }
             Random rand = new Random();
 
             for (int i = 0; i < size; i++) {
                 String word = words[rand.nextInt(words.length)];
-                String sentence = sentences[rand.nextInt(sentences.length)].trim();
+                String sentence = sentences.get(rand.nextInt(sentences.size())).trim();
                 User user = users.get(rand.nextInt(users.size()));
                 if (rand.nextBoolean()) {
                     sendMemo(realm, word, sentence, user);

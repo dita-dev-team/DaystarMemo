@@ -50,8 +50,6 @@ public class MemosChatActivity extends AppCompatActivity {
     public void init() {
         realm = Realm.getDefaultInstance();
 
-
-
         Bundle extras = getIntent().getExtras();
         username = null;
         if (extras != null) {
@@ -81,7 +79,7 @@ public class MemosChatActivity extends AppCompatActivity {
         });
 
         actions = new EmojIconActions(this, rootView, editText, emojiButton);
-        //actions.ShowEmojIcon();
+        actions.ShowEmojIcon();
     }
 
     @Override
@@ -143,7 +141,6 @@ public class MemosChatActivity extends AppCompatActivity {
                     memo.latest = true;
                     memo.status = "toBeSent";
                     memo.date = new Date();
-                    //realm.copyToRealm(memo);
                     memo.recipient.memos.add(memo);
                 }
             }, new Realm.Transaction.OnSuccess() {

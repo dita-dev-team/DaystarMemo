@@ -46,6 +46,7 @@ public class MemosListAdapter extends RealmBaseAdapter<Memo> {
         Memo memo = adapterData.get(position);
         String username = memo.isMe ? memo.recipient.username : memo.sender.username;
         String body = memo.body;
+        body = memo.isMe ? "You: " + body : body;
         String date = (String) DateUtils.getRelativeTimeSpanString(memo.date.getTime(), NOW.getTime(), DateUtils.DAY_IN_MILLIS);
 
         // Truncate body text if its long than the max width

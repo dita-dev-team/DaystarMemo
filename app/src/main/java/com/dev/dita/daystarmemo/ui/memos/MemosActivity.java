@@ -16,6 +16,7 @@ import com.dev.dita.daystarmemo.model.database.Memo;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.OnItemClick;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -66,6 +67,7 @@ public class MemosActivity extends AppCompatActivity {
         });
 
         empty.setVisibility(adapter.isEmpty() ? View.VISIBLE : View.GONE);
+        setTitle("Memos");
     }
 
     @Override
@@ -104,5 +106,10 @@ public class MemosActivity extends AppCompatActivity {
         Intent intent = new Intent(MemosActivity.this, MemosChatActivity.class);
         intent.putExtra("username", username);
         startActivity(intent);
+    }
+
+    @OnClick(R.id.memos_new_memo)
+    public void onNewButtonClicked() {
+        startActivity(new Intent(this, NewMemoActivity.class));
     }
 }
