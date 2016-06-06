@@ -19,9 +19,21 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
 
+/**
+ * The type Memos chat list adapter.
+ */
 public class MemosChatListAdapter extends RealmBaseAdapter<Memo> {
+    /**
+     * The Tag.
+     */
     final String TAG = getClass().getName();
 
+    /**
+     * Instantiates a new Memos chat list adapter.
+     *
+     * @param context the context
+     * @param data    the data
+     */
     public MemosChatListAdapter(Context context, OrderedRealmCollection<Memo> data) {
         super(context, data);
     }
@@ -46,6 +58,12 @@ public class MemosChatListAdapter extends RealmBaseAdapter<Memo> {
         return convertView;
     }
 
+    /**
+     * Sets the alignment and color of memeo based on sender
+     *
+     * @param holder a ViewHolder
+     * @param isMe   a boolean
+     */
     private void setAlignment(ViewHolder holder, Boolean isMe) {
         if (!isMe) {
             holder.image.setVisibility(View.VISIBLE);
@@ -80,18 +98,41 @@ public class MemosChatListAdapter extends RealmBaseAdapter<Memo> {
         }
     }
 
+    /**
+     * The type View holder.
+     */
     public static class ViewHolder {
+        /**
+         * The Message.
+         */
         @BindView(R.id.memo_chat_item_message)
         public TextView message;
+        /**
+         * The Info.
+         */
         @BindView(R.id.memo_chat_item_info)
         public TextView info;
+        /**
+         * The Content.
+         */
         @BindView(R.id.memo_chat_item_content)
         public LinearLayout content;
+        /**
+         * The Main content.
+         */
         @BindView(R.id.memo_chat_item_main_content)
         public LinearLayout mainContent;
+        /**
+         * The Image.
+         */
         @BindView(R.id.memo_chat_item_user_image)
         CircleImageView image;
 
+        /**
+         * Instantiates a new View holder.
+         *
+         * @param view the view
+         */
         public ViewHolder(View view) {
             ButterKnife.bind(this, view);
         }

@@ -20,6 +20,9 @@ import hani.momanii.supernova_emoji_library.Helper.EmojiconTextView;
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
 
+/**
+ * The type Memos list adapter.
+ */
 public class MemosListAdapter extends RealmBaseAdapter<Memo> {
 
     final Date NOW = new Date();
@@ -61,6 +64,7 @@ public class MemosListAdapter extends RealmBaseAdapter<Memo> {
         viewHolder.body.setText(body);
         viewHolder.date.setText(date);
 
+        // Set color of row based on memo status
         if (memo.status.equalsIgnoreCase("unread")) {
             viewHolder.date.setTextColor(color);
             viewHolder.body.setTextColor(color);

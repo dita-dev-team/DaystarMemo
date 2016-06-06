@@ -1,7 +1,10 @@
-package com.dev.dita.daystarmemo.model.database.objects;
+package com.dev.dita.daystarmemo.model.objects;
 
 import java.io.Serializable;
 
+/**
+ * The type Recipient.
+ */
 public class Recipient implements Serializable {
     public String username;
     public String name;

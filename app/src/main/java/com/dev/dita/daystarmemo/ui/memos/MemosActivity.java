@@ -23,6 +23,9 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
+/**
+ * The type Memos activity.
+ */
 public class MemosActivity extends AppCompatActivity {
     final String TAG = getClass().getName();
     @BindView(R.id.memos_empty)
@@ -43,11 +46,11 @@ public class MemosActivity extends AppCompatActivity {
     };
 
     public void init() {
+        // Get all the latest memos from all the users
         realm = Realm.getDefaultInstance();
         memos = realm.where(Memo.class).equalTo("latest", true).findAllSorted("date", Sort.DESCENDING);
         memos.addChangeListener(listener);
         adapter = new MemosListAdapter(this, memos);
-        //adapter = new TestAdapter(this, R.layout.memos_list_item, R.id.memo_list_username, memos.subList(0, memos.size()-1));
         listView.setAdapter(adapter);
 
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {

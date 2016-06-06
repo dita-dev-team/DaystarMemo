@@ -10,8 +10,9 @@ import android.widget.ImageButton;
 
 import com.dev.dita.daystarmemo.R;
 import com.dev.dita.daystarmemo.model.database.User;
-import com.dev.dita.daystarmemo.model.database.objects.Recipient;
+import com.dev.dita.daystarmemo.model.objects.Recipient;
 import com.dev.dita.daystarmemo.ui.customviews.RecipientsCompletionView;
+import com.tokenautocomplete.TokenCompleteTextView;
 
 import java.util.ArrayList;
 
@@ -22,7 +23,10 @@ import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class NewMemoActivity extends AppCompatActivity {
+/**
+ * The type New memo activity.
+ */
+public class NewMemoActivity extends AppCompatActivity implements TokenCompleteTextView.TokenListener<Recipient> {
 
     @BindView(R.id.new_memo_recipient)
     RecipientsCompletionView recipients;
@@ -40,21 +44,27 @@ public class NewMemoActivity extends AppCompatActivity {
     private Realm realm;
     private RealmResults<User> users;
 
+    /**
+     * Init.
+     */
     public void init() {
+        // Load all users from database
         realm = Realm.getDefaultInstance();
-
         users = realm.where(User.class).findAll();
-
-
         ArrayList<Recipient> recipientsList = new ArrayList<>();
         for (User user : users) {
             recipientsList.add(new Recipient(user.username, user.name));
         }
         recipients.performBestGuess(false);
+        // Setup recipients
         recipients.setAdapter(new ArrayAdapter<Recipient>(this, android.R.layout.simple_list_item_1, recipientsList));
-
+        recipients.setTokenListener(this);
+        // Setup emojis
         actions = new EmojIconActions(this, rootView, editText, emojiButton);
         actions.ShowEmojIcon();
+
+        emojiButton.setEnabled(false);
+        sendButton.setEnabled(false);
     }
 
     @Override
@@ -64,6 +74,7 @@ public class NewMemoActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        // Setup custom toolbar
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayShowHomeEnabled(false);
 
@@ -83,4 +94,23 @@ public class NewMemoActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onTokenAdded(Recipient token) {
+        // Enable buttons when a recipient is added
+        emojiButton.setEnabled(true);
+        sendButton.setEnabled(true);
+    }
+
+    @Override
+    public void onTokenRemoved(Recipient token) {
+        // Disable buttons if recipient list is empty
+        if (!hasRecipient()) {
+            emojiButton.setEnabled(false);
+            sendButton.setEnabled(false);
+        }
+    }
+
+    public boolean hasRecipient() {
+        return recipients.getObjects().size() > 0;
+    }
 }

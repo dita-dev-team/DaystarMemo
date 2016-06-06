@@ -11,9 +11,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dev.dita.daystarmemo.R;
-import com.dev.dita.daystarmemo.model.database.objects.Recipient;
+import com.dev.dita.daystarmemo.model.objects.Recipient;
 import com.tokenautocomplete.TokenCompleteTextView;
 
+/**
+ * The type Recipients completion view.
+ * This class handles the creation of tokens in the MultiAutoCompleteView
+ */
 public class RecipientsCompletionView extends TokenCompleteTextView<Recipient> {
     public RecipientsCompletionView(Context context) {
         super(context);

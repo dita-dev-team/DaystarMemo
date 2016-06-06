@@ -25,6 +25,9 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
+/**
+ * The type Memos chat activity.
+ */
 public class MemosChatActivity extends AppCompatActivity {
 
     @BindView(R.id.memos_chat_list_view)
@@ -50,11 +53,13 @@ public class MemosChatActivity extends AppCompatActivity {
     public void init() {
         realm = Realm.getDefaultInstance();
 
+        // Get the user for the chat
         Bundle extras = getIntent().getExtras();
         username = null;
         if (extras != null) {
             username = extras.getString("username");
         }
+        // fetch all memos for this user
         memos = realm.where(User.class).equalTo("username", username).findFirst().memos.where().findAllSortedAsync("date");
         memos.addChangeListener(new RealmChangeListener<RealmResults<Memo>>() {
             @Override
@@ -65,6 +70,7 @@ public class MemosChatActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
         setTitle(username);
 
+        // Change memo status as soon as its opened
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -78,6 +84,7 @@ public class MemosChatActivity extends AppCompatActivity {
             }
         });
 
+        // Initialize emojis
         actions = new EmojIconActions(this, rootView, editText, emojiButton);
         actions.ShowEmojIcon();
     }
@@ -109,16 +116,6 @@ public class MemosChatActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         NavUtils.navigateUpFromSameTask(this);
-    }
-
-
-    @OnClick(R.id.memos_chat_emoji_button)
-    public void onEmojiButtonClicked() {
-        if (!emojiButton.isSelected()) {
-            emojiButton.setSelected(true);
-        } else {
-            emojiButton.setSelected(false);
-        }
     }
 
     @OnClick(R.id.memos_chat_send_button)
