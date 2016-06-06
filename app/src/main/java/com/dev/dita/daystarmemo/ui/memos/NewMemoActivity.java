@@ -12,7 +12,6 @@ import com.dev.dita.daystarmemo.R;
 import com.dev.dita.daystarmemo.model.database.User;
 import com.dev.dita.daystarmemo.model.database.objects.Recipient;
 import com.dev.dita.daystarmemo.ui.customviews.RecipientsCompletionView;
-import com.tokenautocomplete.TokenCompleteTextView;
 
 import java.util.ArrayList;
 
@@ -23,7 +22,7 @@ import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class NewMemoActivity extends AppCompatActivity implements TokenCompleteTextView.TokenListener {
+public class NewMemoActivity extends AppCompatActivity {
 
     @BindView(R.id.new_memo_recipient)
     RecipientsCompletionView recipients;
@@ -56,9 +55,6 @@ public class NewMemoActivity extends AppCompatActivity implements TokenCompleteT
 
         actions = new EmojIconActions(this, rootView, editText, emojiButton);
         actions.ShowEmojIcon();
-
-        emojiButton.setEnabled(false);
-        sendButton.setEnabled(false);
     }
 
     @Override
@@ -87,19 +83,4 @@ public class NewMemoActivity extends AppCompatActivity implements TokenCompleteT
     }
 
 
-    @Override
-    public void onTokenAdded(Object token) {
-
-    }
-
-    @Override
-    public void onTokenRemoved(Object token) {
-        if (recipients.getObjects().size() == 0) {
-            emojiButton.setEnabled(false);
-            sendButton.setEnabled(false);
-        } else {
-            emojiButton.setEnabled(true);
-            sendButton.setEnabled(true);
-        }
-    }
 }

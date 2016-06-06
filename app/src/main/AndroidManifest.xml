@@ -36,6 +36,30 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.dev.dita.daystarmemo.ui.main.MainActivity" />
         </activity>
+        <activity
+            android:name=".ui.memos.MemosActivity"
+            android:label="@string/title_activity_memos"
+            android:parentActivityName=".ui.main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.dev.dita.daystarmemo.ui.main.MainActivity" />
+        </activity>
+        <activity
+            android:name=".ui.memos.MemosChatActivity"
+            android:label="@string/title_activity_memos_chat"
+            android:parentActivityName=".ui.memos.MemosActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.dev.dita.daystarmemo.ui.memos.MemosActivity" />
+        </activity>
+        <activity
+            android:name=".ui.memos.NewMemoActivity"
+            android:label="@string/title_activity_new_memo"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize"></activity>
     </application>
 
 </manifest>

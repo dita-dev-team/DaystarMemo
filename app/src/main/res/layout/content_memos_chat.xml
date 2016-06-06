@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.dev.dita.daystarmemo.ui.memos.MemosChatActivity"
+    tools:showIn="@layout/activity_memos_chat">
+
+    <RelativeLayout
+        android:id="@+id/memos_chat_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="4dp">
+
+        <View
+            android:id="@+id/memos_chat_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_above="@+id/memos_chat_edit_view"
+            android:background="@color/baseColor2" />
+
+        <LinearLayout
+            android:id="@+id/memos_chat_edit_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <ImageButton
+                android:id="@+id/memos_chat_emoji_button"
+                android:layout_width="28dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/smiley" />
+
+            <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
+                android:id="@+id/memos_chat_edit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="Type a message"
+                emojicon:emojiconSize="28sp" />
+
+            <ImageButton
+                android:id="@+id/memos_chat_send_button"
+                android:layout_width="28dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:src="@drawable/ic_send" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/memos_chat_emojicons"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/memos_chat_edit_view" />
+
+        <ListView
+            android:id="@+id/memos_chat_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/memos_chat_divider"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentTop="false"
+            android:divider="@null"
+            android:listSelector="@android:color/transparent"
+            android:transcriptMode="alwaysScroll" />
+
+
+    </RelativeLayout>
+
+</LinearLayout>
