@@ -49,7 +49,6 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnLongClick;
 import butterknife.OnTextChanged;
 
 /**
@@ -167,10 +166,53 @@ public class ProfileActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    @OnClick(R.id.profile_image)
+    public void changeImage() {
+        final CharSequence[] items = {
+                "Take Photo",
+                "Choose from Gallery",
+                "Remove Photo"
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //builder.setTitle("Change Photo");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        captureImage();
+                        break;
+                    case 1:
+                        chooseImage();
+                        break;
+                    case 2:
+                        String image = PrefSettings.getValue(ProfileActivity.this, "image");
+                        if (!TextUtils.isEmpty(image)) {
+                            new AlertDialog.Builder(ProfileActivity.this)
+                                    .setMessage("Are you sure?")
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            profileImage.setImageDrawable(getResources().getDrawable(R.drawable.default_profile));
+                                            saveButton.setEnabled(true);
+
+                                        }
+                                    })
+                                    .setNegativeButton("No", null)
+                                    .show();
+
+                        }
+                        break;
+                }
+            }
+        });
+        builder.show();
+    }
+
     /**
      * Capture image.
      */
-    @OnClick(R.id.profile_image)
     public void captureImage() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
@@ -185,13 +227,7 @@ public class ProfileActivity extends AppCompatActivity {
         startActivityForResult(intent, IMAGE_CAPTURE);
     }
 
-    /**
-     * Choose profile image boolean.
-     *
-     * @return the boolean
-     */
-    @OnLongClick(R.id.profile_image)
-    public boolean chooseProfileImage() {
+    public boolean chooseImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
         startActivityForResult(Intent.createChooser(intent, "Select Photo"), IMAGE_PICK);
