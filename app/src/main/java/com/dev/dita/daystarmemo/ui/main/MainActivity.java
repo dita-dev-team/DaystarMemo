@@ -13,12 +13,16 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baasbox.android.BaasBox;
+import com.baasbox.android.BaasHandler;
+import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.json.JsonObject;
 import com.dev.dita.daystarmemo.PrefSettings;
@@ -43,6 +47,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final String TAG = MainActivity.class.getName();
 
     /**
      * The User name.
@@ -85,6 +91,19 @@ public class MainActivity extends AppCompatActivity
         userName = (TextView) headerView.findViewById(R.id.nav_name);
         userEmail = (TextView) headerView.findViewById(R.id.nav_email);
         initUser();
+        Log.d(TAG, String.valueOf(BaasBox.messagingService().isEnabled()));
+        if (!BaasBox.messagingService().isEnabled()) {
+            BaasBox.messagingService().enable(new BaasHandler<Void>() {
+                @Override
+                public void handle(BaasResult<Void> baasResult) {
+                    if (baasResult.isSuccess()) {
+                        Log.d(TAG, "Successful");
+                    } else {
+                        Log.e(TAG, "Failed");
+                    }
+                }
+            });
+        }
     }
 
     @Override

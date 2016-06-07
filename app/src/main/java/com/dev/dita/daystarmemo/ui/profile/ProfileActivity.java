@@ -61,6 +61,9 @@ public class ProfileActivity extends AppCompatActivity {
     private static final int IMAGE_PICK = 1;
     private static final int IMAGE_CAPTURE = 2;
 
+    /**
+     * The Swipe refresh layout.
+     */
     @BindView(R.id.profile_refresh_animation)
     SwipeRefreshLayout swipeRefreshLayout;
     /**
@@ -166,6 +169,9 @@ public class ProfileActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    /**
+     * Change image.
+     */
     @OnClick(R.id.profile_image)
     public void changeImage() {
         final CharSequence[] items = {
@@ -227,6 +233,11 @@ public class ProfileActivity extends AppCompatActivity {
         startActivityForResult(intent, IMAGE_CAPTURE);
     }
 
+    /**
+     * Choose image boolean.
+     *
+     * @return the boolean
+     */
     public boolean chooseImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
@@ -258,6 +269,9 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Change password.
+     */
     @OnClick(R.id.change_password_button)
     public void changePassword() {
         LinearLayout layout = new LinearLayout(this);
@@ -387,6 +401,11 @@ public class ProfileActivity extends AppCompatActivity {
         User.updateUserProfile(details);
     }
 
+    /**
+     * On event.
+     *
+     * @param remoteResult the remote result
+     */
     @Subscribe
     public void onEvent(UserBus.ProfileUpdatedRemoteResult remoteResult) {
         if (remoteResult.error) {
@@ -406,6 +425,11 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * On event.
+     *
+     * @param changeResult the change result
+     */
     @Subscribe
     public void onEvent(UserBus.PasswordChangeResult changeResult) {
         if (changeResult.error) {
