@@ -3,6 +3,7 @@ package com.dev.dita.daystarmemo.ui.memos;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.Html;
 import android.text.TextPaint;
 import android.text.format.DateUtils;
 import android.view.View;
@@ -49,7 +50,7 @@ public class MemosListAdapter extends RealmBaseAdapter<Memo> {
         Memo memo = adapterData.get(position);
         String username = memo.isMe ? memo.recipient.username : memo.sender.username;
         String body = memo.body;
-        body = memo.isMe ? "You: " + body : body;
+        body = memo.isMe ? "<b>You</b>: " + body : body;
         String date = (String) DateUtils.getRelativeTimeSpanString(memo.date.getTime(), NOW.getTime(), DateUtils.DAY_IN_MILLIS);
 
         // Truncate body text if its long than the max width
@@ -61,7 +62,7 @@ public class MemosListAdapter extends RealmBaseAdapter<Memo> {
         }
 
         viewHolder.username.setText(username);
-        viewHolder.body.setText(body);
+        viewHolder.body.setText(Html.fromHtml(body));
         viewHolder.date.setText(date);
 
         // Set color of row based on memo status
@@ -88,4 +89,6 @@ public class MemosListAdapter extends RealmBaseAdapter<Memo> {
             ButterKnife.bind(this, view);
         }
     }
+
+
 }

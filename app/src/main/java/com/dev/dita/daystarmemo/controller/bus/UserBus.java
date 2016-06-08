@@ -1,6 +1,10 @@
 package com.dev.dita.daystarmemo.controller.bus;
 
 
+import com.baasbox.android.BaasUser;
+
+import java.util.List;
+
 /**
  * A class containing all classes used by the EventBus when dealing with a user
  */
@@ -138,6 +142,15 @@ public class UserBus {
     }
 
     public static class PasswordChangeResult {
+        public Boolean error;
+    }
+
+    public static class GetUsersResult {
+        public List<BaasUser> users;
+        public Boolean error;
+    }
+
+    public static class AddUserResult {
         public Boolean error;
     }
 }

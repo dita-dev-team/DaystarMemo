@@ -13,12 +13,16 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baasbox.android.BaasBox;
+import com.baasbox.android.BaasHandler;
+import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.json.JsonObject;
 import com.dev.dita.daystarmemo.PrefSettings;
@@ -26,7 +30,8 @@ import com.dev.dita.daystarmemo.R;
 import com.dev.dita.daystarmemo.controller.bus.UserBus;
 import com.dev.dita.daystarmemo.controller.utils.ImageUtils;
 import com.dev.dita.daystarmemo.controller.utils.UIUtils;
-import com.dev.dita.daystarmemo.model.baas.User;
+import com.dev.dita.daystarmemo.model.baas.UserBaas;
+import com.dev.dita.daystarmemo.ui.connections.ConnectionsActivity;
 import com.dev.dita.daystarmemo.ui.memos.MemosActivity;
 import com.dev.dita.daystarmemo.ui.profile.ProfileActivity;
 import com.dev.dita.daystarmemo.ui.welcome.WelcomeActivity;
@@ -43,7 +48,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
+    final String TAG = getClass().getName();
     /**
      * The User name.
      */
@@ -85,6 +90,19 @@ public class MainActivity extends AppCompatActivity
         userName = (TextView) headerView.findViewById(R.id.nav_name);
         userEmail = (TextView) headerView.findViewById(R.id.nav_email);
         initUser();
+        Log.d(TAG, String.valueOf(BaasBox.messagingService().isEnabled()));
+        if (!BaasBox.messagingService().isEnabled()) {
+            BaasBox.messagingService().enable(new BaasHandler<Void>() {
+                @Override
+                public void handle(BaasResult<Void> baasResult) {
+                    if (baasResult.isSuccess()) {
+                        Log.d(TAG, "Successful");
+                    } else {
+                        Log.e(TAG, "Failed");
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -162,8 +180,8 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_memo) {
             startActivity(new Intent(MainActivity.this, MemosActivity.class));
-        } else if (id == R.id.nav_gallery) {
-
+        } else if (id == R.id.nav_connections) {
+            startActivity(new Intent(MainActivity.this, ConnectionsActivity.class));
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -181,7 +199,7 @@ public class MainActivity extends AppCompatActivity
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             UIUtils.setAnimation(swipeRefreshLayout, true);
-                            User.logoutUser();
+                            UserBaas.logoutUser();
 
                         }
                     })

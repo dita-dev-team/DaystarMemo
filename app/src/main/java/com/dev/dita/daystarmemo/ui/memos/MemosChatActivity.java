@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import com.baasbox.android.RequestToken;
 import com.dev.dita.daystarmemo.R;
 import com.dev.dita.daystarmemo.model.database.Memo;
 import com.dev.dita.daystarmemo.model.database.User;
@@ -30,18 +31,34 @@ import io.realm.RealmResults;
  */
 public class MemosChatActivity extends AppCompatActivity {
 
+    /**
+     * The List view.
+     */
     @BindView(R.id.memos_chat_list_view)
     ListView listView;
+    /**
+     * The Edit text.
+     */
     @BindView(R.id.memos_chat_edit)
     EmojiconEditText editText;
+    /**
+     * The Emoji button.
+     */
     @BindView(R.id.memos_chat_emoji_button)
     ImageButton emojiButton;
+    /**
+     * The Send button.
+     */
     @BindView(R.id.memos_chat_send_button)
     ImageButton sendButton;
+    /**
+     * The Root view.
+     */
     @BindView(R.id.memos_chat_edit_view)
     View rootView;
 
     private EmojIconActions actions;
+    private RequestToken mCurrentRequest;
 
 
     private Realm realm;
@@ -50,6 +67,9 @@ public class MemosChatActivity extends AppCompatActivity {
 
     private String username;
 
+    /**
+     * Init.
+     */
     public void init() {
         realm = Realm.getDefaultInstance();
 
@@ -118,6 +138,9 @@ public class MemosChatActivity extends AppCompatActivity {
         NavUtils.navigateUpFromSameTask(this);
     }
 
+    /**
+     * On send button clicked.
+     */
     @OnClick(R.id.memos_chat_send_button)
     public void onSendButtonClicked() {
         if (!TextUtils.isEmpty(editText.getText().toString())) {
@@ -148,5 +171,4 @@ public class MemosChatActivity extends AppCompatActivity {
             });
         }
     }
-
 }

@@ -1,4 +1,4 @@
-package com.dev.dita.daystarmemo.ui.memos;
+package com.dev.dita.daystarmemo.ui.connections;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,53 +12,39 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.dev.dita.daystarmemo.R;
-import com.dev.dita.daystarmemo.model.database.Memo;
+import com.dev.dita.daystarmemo.model.database.User;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnItemClick;
 import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
-import io.realm.Sort;
 
-/**
- * The type Memos activity.
- */
-public class MemosActivity extends AppCompatActivity {
+public class ConnectionsActivity extends AppCompatActivity {
     final String TAG = getClass().getName();
-    @BindView(R.id.memos_empty)
+    @BindView(R.id.connections_empty)
     TextView empty;
-    @BindView(R.id.memos_list_view)
+    @BindView(R.id.connections_list_view)
     ListView listView;
-    @BindView(R.id.memos_new_memo)
-    FloatingActionButton newMemoButton;
+    @BindView(R.id.connections_new_connection)
+    FloatingActionButton newConnectionButton;
 
     private Realm realm;
-    private RealmResults<Memo> memos;
-    private MemosListAdapter adapter;
-    private RealmChangeListener listener = new RealmChangeListener() {
-        @Override
-        public void onChange(Object element) {
-            adapter.notifyDataSetChanged();
-        }
-    };
+    private RealmResults<User> users;
+    private ConnectionsListAdapter adapter;
 
     public void init() {
-        // Get all the latest memos from all the users
         realm = Realm.getDefaultInstance();
-        memos = realm.where(Memo.class).equalTo("latest", true).findAllSorted("date", Sort.DESCENDING);
-        memos.addChangeListener(listener);
-        adapter = new MemosListAdapter(this, memos);
+        users = realm.where(User.class).findAllSorted("username");
+        adapter = new ConnectionsListAdapter(this, users);
         listView.setAdapter(adapter);
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (scrollState == SCROLL_STATE_IDLE) {
-                    newMemoButton.setVisibility(View.VISIBLE);
+                    newConnectionButton.setVisibility(View.VISIBLE);
                 } else {
-                    newMemoButton.setVisibility(View.INVISIBLE);
+                    newConnectionButton.setVisibility(View.INVISIBLE);
                 }
             }
 
@@ -69,15 +55,15 @@ public class MemosActivity extends AppCompatActivity {
         });
 
         empty.setVisibility(adapter.isEmpty() ? View.VISIBLE : View.GONE);
-        setTitle("Memos");
+        setTitle("Your Connections");
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_memos);
+        setContentView(R.layout.activity_connections);
         ButterKnife.bind(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.connections_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init();
@@ -91,7 +77,7 @@ public class MemosActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        memos.removeChangeListeners();
+        users.removeChangeListeners();
         realm.close();
     }
 
@@ -101,17 +87,8 @@ public class MemosActivity extends AppCompatActivity {
         NavUtils.navigateUpFromSameTask(this);
     }
 
-    @OnItemClick(R.id.memos_list_view)
-    public void onItemClick(int position) {
-        Memo memo = adapter.getItem(position);
-        String username = memo.isMe ? memo.recipient.username : memo.sender.username;
-        Intent intent = new Intent(MemosActivity.this, MemosChatActivity.class);
-        intent.putExtra("username", username);
-        startActivity(intent);
-    }
-
-    @OnClick(R.id.memos_new_memo)
+    @OnClick(R.id.connections_new_connection)
     public void onNewButtonClicked() {
-        startActivity(new Intent(this, NewMemoActivity.class));
+        startActivity(new Intent(this, NewConnectionActivity.class));
     }
 }

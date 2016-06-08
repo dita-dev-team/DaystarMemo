@@ -5,6 +5,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission
+        android:name="com.dev.dita.daystarmemo.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.dev.dita.daystarmemo.permission.C2D_MESSAGE" />
 
     <application
         android:name=".MemoApp"
@@ -13,6 +19,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
         <activity
             android:name=".ui.welcome.WelcomeActivity"
             android:label="@string/title_activity_welcome"
@@ -59,7 +68,36 @@
             android:name=".ui.memos.NewMemoActivity"
             android:label="@string/title_activity_new_memo"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysVisible|adjustResize"></activity>
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
+        <activity
+            android:name=".ui.connections.ConnectionsActivity"
+            android:label="@string/title_activity_connections"
+            android:parentActivityName=".ui.main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.dev.dita.daystarmemo.ui.main.MainActivity" />
+        </activity>
+        <activity
+            android:name=".ui.connections.NewConnectionActivity"
+            android:label="@string/title_activity_new_connection"
+            android:parentActivityName=".ui.connections.ConnectionsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.dev.dita.daystarmemo.ui.connections.ConnectionsActivity" />
+        </activity>
+
+        <receiver
+            android:name=".receivers.MemoReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.dev.dita.daystarmemo" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

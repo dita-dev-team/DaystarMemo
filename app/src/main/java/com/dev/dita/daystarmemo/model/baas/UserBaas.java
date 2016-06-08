@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.baasbox.android.BaasException;
 import com.baasbox.android.BaasHandler;
+import com.baasbox.android.BaasQuery;
 import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.json.JsonException;
@@ -14,17 +15,18 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Map;
 
 
 /**
  * A java class which handles all user-management related actions to and from the baas
  */
-public class User {
+public class UserBaas {
     /**
      * The constant TAG.
      */
-    public static final String TAG = User.class.getName();
+    public static final String TAG = UserBaas.class.getName();
 
 
     /**
@@ -185,6 +187,25 @@ public class User {
                 passwordResult.error = !baasResult.isSuccess();
                 EventBus.getDefault().post(passwordResult);
 
+            }
+        });
+    }
+
+    public static void getUsers() {
+        BaasQuery.Criteria filter = BaasQuery.builder().orderBy("user.name").criteria();
+        BaasUser.fetchAll(filter, new BaasHandler<List<BaasUser>>() {
+            @Override
+            public void handle(BaasResult<List<BaasUser>> baasResult) {
+                UserBus.GetUsersResult usersResult = new UserBus.GetUsersResult();
+                if (baasResult.isSuccess()) {
+                    usersResult.error = false;
+                    usersResult.users = baasResult.value();
+                } else {
+                    usersResult.error = true;
+                    Log.i(TAG, baasResult.error().getMessage());
+                }
+
+                EventBus.getDefault().post(usersResult);
             }
         });
     }

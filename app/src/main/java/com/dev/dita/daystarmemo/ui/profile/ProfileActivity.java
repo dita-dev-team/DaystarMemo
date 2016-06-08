@@ -37,7 +37,7 @@ import com.dev.dita.daystarmemo.R;
 import com.dev.dita.daystarmemo.controller.bus.UserBus;
 import com.dev.dita.daystarmemo.controller.utils.ImageUtils;
 import com.dev.dita.daystarmemo.controller.utils.UIUtils;
-import com.dev.dita.daystarmemo.model.baas.User;
+import com.dev.dita.daystarmemo.model.baas.UserBaas;
 import com.dev.dita.daystarmemo.ui.customviews.CoordinatedCircularImageView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -61,6 +61,9 @@ public class ProfileActivity extends AppCompatActivity {
     private static final int IMAGE_PICK = 1;
     private static final int IMAGE_CAPTURE = 2;
 
+    /**
+     * The Swipe refresh layout.
+     */
     @BindView(R.id.profile_refresh_animation)
     SwipeRefreshLayout swipeRefreshLayout;
     /**
@@ -166,6 +169,9 @@ public class ProfileActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    /**
+     * Change image.
+     */
     @OnClick(R.id.profile_image)
     public void changeImage() {
         final CharSequence[] items = {
@@ -227,6 +233,11 @@ public class ProfileActivity extends AppCompatActivity {
         startActivityForResult(intent, IMAGE_CAPTURE);
     }
 
+    /**
+     * Choose image boolean.
+     *
+     * @return the boolean
+     */
     public boolean chooseImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
@@ -258,6 +269,9 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Change password.
+     */
     @OnClick(R.id.change_password_button)
     public void changePassword() {
         LinearLayout layout = new LinearLayout(this);
@@ -285,7 +299,7 @@ public class ProfileActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Old password doesn't match", Toast.LENGTH_SHORT).show();
                             changePassword();
                         } else {
-                            User.changePassword(newPassword);
+                            UserBaas.changePassword(newPassword);
                         }
                     }
                 })
@@ -384,9 +398,14 @@ public class ProfileActivity extends AppCompatActivity {
         Bitmap bitmap = profileImage.getDrawingCache();
         details.put("image", ImageUtils.decodeBitmapToString(bitmap));
         // Save profile to remote server
-        User.updateUserProfile(details);
+        UserBaas.updateUserProfile(details);
     }
 
+    /**
+     * On event.
+     *
+     * @param remoteResult the remote result
+     */
     @Subscribe
     public void onEvent(UserBus.ProfileUpdatedRemoteResult remoteResult) {
         if (remoteResult.error) {
@@ -406,6 +425,11 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * On event.
+     *
+     * @param changeResult the change result
+     */
     @Subscribe
     public void onEvent(UserBus.PasswordChangeResult changeResult) {
         if (changeResult.error) {
@@ -413,7 +437,7 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             PrefSettings.setValue(this, "password", BaasUser.current().getPassword());
             // login the user after password is changed to refresh token
-            User.loginUser(PrefSettings.getValue(this, "username"), PrefSettings.getValue(this, "password"));
+            UserBaas.loginUser(PrefSettings.getValue(this, "username"), PrefSettings.getValue(this, "password"));
             Toast.makeText(this, "Password changed successfully", Toast.LENGTH_LONG).show();
         }
     }

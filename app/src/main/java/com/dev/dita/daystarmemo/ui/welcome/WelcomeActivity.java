@@ -10,7 +10,7 @@ import android.view.View;
 import com.dev.dita.daystarmemo.R;
 import com.dev.dita.daystarmemo.controller.bus.UserBus;
 import com.dev.dita.daystarmemo.controller.utils.UIUtils;
-import com.dev.dita.daystarmemo.model.baas.User;
+import com.dev.dita.daystarmemo.model.baas.UserBaas;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -92,7 +92,7 @@ public class WelcomeActivity extends AppCompatActivity {
     @Subscribe
     public void onEvent(UserBus.LoginEvent loginEvent) {
         UIUtils.setAnimation(swipeRefreshLayout, true);
-        User.loginUser(loginEvent.username, loginEvent.password);
+        UserBaas.loginUser(loginEvent.username, loginEvent.password);
     }
 
     /**
@@ -103,7 +103,7 @@ public class WelcomeActivity extends AppCompatActivity {
     @Subscribe
     public void onEvent(UserBus.RegisterEvent registerEvent) {
         UIUtils.setAnimation(swipeRefreshLayout, true);
-        User.createUser(registerEvent.username, registerEvent.email, registerEvent.password);
+        UserBaas.createUser(registerEvent.username, registerEvent.email, registerEvent.password);
     }
 
     /**
