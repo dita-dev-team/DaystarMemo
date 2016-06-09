@@ -1,6 +1,7 @@
 package com.dev.dita.daystarmemo.ui.memos;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import com.dev.dita.daystarmemo.R;
 import com.dev.dita.daystarmemo.controller.bus.MemoBus;
+import com.dev.dita.daystarmemo.controller.utils.UIUtils;
 import com.dev.dita.daystarmemo.model.baas.MemoBaas;
 import com.dev.dita.daystarmemo.model.database.Memo;
 import com.dev.dita.daystarmemo.model.database.User;
@@ -38,6 +40,8 @@ import io.realm.RealmResults;
  */
 public class NewMemoActivity extends AppCompatActivity implements TokenCompleteTextView.TokenListener<Recipient> {
 
+    @BindView(R.id.new_memo_refresh_animation)
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.new_memo_recipient)
     RecipientsCompletionView recipients;
     @BindView(R.id.new_memo_edit)
@@ -55,11 +59,15 @@ public class NewMemoActivity extends AppCompatActivity implements TokenCompleteT
     private RealmResults<User> users;
 
     private int memoCount;
+    private int memosFailed;
+    private int memosSent;
 
     /**
      * Init.
      */
     public void init() {
+        swipeRefreshLayout.setColorSchemeResources(R.color.baseColor1, R.color.baseColor2);
+        UIUtils.setAnimation(swipeRefreshLayout, false);
         // Load all users from database
         realm = Realm.getDefaultInstance();
         users = realm.where(User.class).findAll();
@@ -137,7 +145,10 @@ public class NewMemoActivity extends AppCompatActivity implements TokenCompleteT
         final String text = editText.getText().toString();
 
         if (!TextUtils.isEmpty(text)) {
+            UIUtils.setAnimation(swipeRefreshLayout, true);
             memoCount = recipients.getObjects().size();
+            memosFailed = 0;
+            memosSent = 0;
             Memo memo = new Memo();
             memo.body = text;
             memo.date = new Date();
@@ -176,9 +187,22 @@ public class NewMemoActivity extends AppCompatActivity implements TokenCompleteT
     @Subscribe
     public void onEvent(MemoBus.SendMemoResult result) {
         if (result.error) {
-            Toast.makeText(this, "Failed to send memo", Toast.LENGTH_SHORT).show();
+            memosFailed++;
         } else {
-            Toast.makeText(this, "Memo sent successfully", Toast.LENGTH_SHORT).show();
+            memosSent++;
+        }
+
+        if (memosSent + memosFailed == memoCount) {
+            UIUtils.setAnimation(swipeRefreshLayout, false);
+            String message;
+
+            if (memosSent == memoCount) {
+                message = "Memo sent successfully";
+            } else {
+                message = "Failed to send memo";
+            }
+
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         }
     }
 }

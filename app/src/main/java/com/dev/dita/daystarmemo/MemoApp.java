@@ -24,7 +24,7 @@ public class MemoApp extends MultiDexApplication {
                 .setPort(BuildConfig.PORT)
                 .setAppCode(BuildConfig.APP_KEY)
                 .setSessionTokenExpires(false)
-                .setPushSenderId(BuildConfig.SENDERID)
+                .setSenderId(BuildConfig.SENDERID)
                 .init();
 
         // Initialize database

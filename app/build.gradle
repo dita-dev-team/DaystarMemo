@@ -52,3 +52,5 @@ dependencies {
     compile 'com.google.android.gms:play-services:9.0.1'
     compile project(':baasbox')
 }
+
+apply plugin: 'com.google.gms.google-services'
