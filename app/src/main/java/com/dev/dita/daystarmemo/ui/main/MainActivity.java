@@ -48,7 +48,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    final String TAG = getClass().getName();
+
+    private static final String TAG = MainActivity.class.getName();
+
     /**
      * The User name.
      */

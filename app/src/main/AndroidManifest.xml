@@ -6,10 +6,12 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <permission
         android:name="com.dev.dita.daystarmemo.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="com.dev.dita.daystarmemo.permission.C2D_MESSAGE" />
 
     <application
@@ -22,6 +24,7 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
         <activity
             android:name=".ui.welcome.WelcomeActivity"
             android:label="@string/title_activity_welcome"
@@ -69,6 +72,7 @@
             android:label="@string/title_activity_new_memo"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
+
         <activity
             android:name=".ui.connections.ConnectionsActivity"
             android:label="@string/title_activity_connections"
@@ -82,15 +86,15 @@
             android:name=".ui.connections.NewConnectionActivity"
             android:label="@string/title_activity_new_connection"
             android:parentActivityName=".ui.connections.ConnectionsActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden|adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.dev.dita.daystarmemo.ui.connections.ConnectionsActivity" />
         </activity>
 
         <receiver
-            android:name=".receivers.MemoReceiver"
-            android:enabled="true"
+            android:name=".receivers.PushReceiver"
             android:exported="true"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
@@ -98,6 +102,15 @@
                 <category android:name="com.dev.dita.daystarmemo" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".services.GcmService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

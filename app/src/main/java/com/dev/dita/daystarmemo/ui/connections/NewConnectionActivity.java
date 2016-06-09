@@ -159,7 +159,7 @@ public class NewConnectionActivity extends AppCompatActivity {
     }
 
     @Subscribe
-    void onEvent(UserBus.AddUserResult userResult) {
+    public void onEvent(UserBus.AddUserResult userResult) {
 
         if (!userResult.error) {
             adapter.setYourConnections(users);

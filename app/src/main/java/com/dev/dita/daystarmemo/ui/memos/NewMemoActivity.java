@@ -3,21 +3,31 @@ package com.dev.dita.daystarmemo.ui.memos;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.dev.dita.daystarmemo.R;
+import com.dev.dita.daystarmemo.controller.bus.MemoBus;
+import com.dev.dita.daystarmemo.model.baas.MemoBaas;
+import com.dev.dita.daystarmemo.model.database.Memo;
 import com.dev.dita.daystarmemo.model.database.User;
 import com.dev.dita.daystarmemo.model.objects.Recipient;
 import com.dev.dita.daystarmemo.ui.customviews.RecipientsCompletionView;
 import com.tokenautocomplete.TokenCompleteTextView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 import io.realm.Realm;
@@ -43,6 +53,8 @@ public class NewMemoActivity extends AppCompatActivity implements TokenCompleteT
 
     private Realm realm;
     private RealmResults<User> users;
+
+    private int memoCount;
 
     /**
      * Init.
@@ -72,6 +84,7 @@ public class NewMemoActivity extends AppCompatActivity implements TokenCompleteT
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_memo);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Setup custom toolbar
@@ -93,6 +106,11 @@ public class NewMemoActivity extends AppCompatActivity implements TokenCompleteT
         init();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 
     @Override
     public void onTokenAdded(Recipient token) {
@@ -112,5 +130,55 @@ public class NewMemoActivity extends AppCompatActivity implements TokenCompleteT
 
     public boolean hasRecipient() {
         return recipients.getObjects().size() > 0;
+    }
+
+    @OnClick(R.id.new_memo_send_button)
+    public void onSendButtonClicked() {
+        final String text = editText.getText().toString();
+
+        if (!TextUtils.isEmpty(text)) {
+            memoCount = recipients.getObjects().size();
+            Memo memo = new Memo();
+            memo.body = text;
+            memo.date = new Date();
+            MemoBaas.sendMemo(memo, recipients.getObjects());
+
+            /*for (final Recipient recipient : recipients.getObjects()) {
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        Memo memo = new Memo();
+                        memo.isMe = true;
+                        memo.recipient = realm.where(User.class).equalTo("username", recipient.username).findFirst();
+                        memo.body = text;
+                        if (memo.recipient.memos.size() > 0) {
+                            RealmResults<Memo> memos = memo.recipient.memos.where().equalTo("latest", true).findAll();
+                            for (Memo temp : memos) {
+                                temp.latest = false;
+                            }
+                        }
+                        memo.latest = true;
+                        memo.status = "toBeSent";
+                        memo.date = new Date();
+                        memo.recipient.memos.add(memo);
+                    }
+                }, new Realm.Transaction.OnSuccess() {
+                    @Override
+                    public void onSuccess() {
+                        Memo memo = realm.where(Memo.class).equalTo("recipient.username", recipient.username).equalTo("latest", true).findFirst();
+                        MemoBaas.sendMemo(memo, recipients.);;
+                    }
+                });
+            }*/
+        }
+    }
+
+    @Subscribe
+    public void onEvent(MemoBus.SendMemoResult result) {
+        if (result.error) {
+            Toast.makeText(this, "Failed to send memo", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Memo sent successfully", Toast.LENGTH_SHORT).show();
+        }
     }
 }
