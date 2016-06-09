@@ -1,24 +1,21 @@
 package com.dev.dita.daystarmemo.receivers;
 
-import android.content.BroadcastReceiver;
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
+import android.support.v4.content.WakefulBroadcastReceiver;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.dev.dita.daystarmemo.services.GcmService;
 
-public class PushReceiver extends BroadcastReceiver {
+public class PushReceiver extends WakefulBroadcastReceiver {
     public PushReceiver() {
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
-        String message = gcm.getMessageType(intent);
-        if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(message)) {
-            Bundle extras = intent.getExtras();
-            String messageText = extras.getString("message", "no message");
-            NewMessageNotification.notify(context, messageText, 1);
-        }
+        ComponentName componentName = new ComponentName(context.getPackageName(), GcmService.class.getName());
+        startWakefulService(context, (intent.setComponent(componentName)));
+        setResultCode(Activity.RESULT_OK);
     }
 }
