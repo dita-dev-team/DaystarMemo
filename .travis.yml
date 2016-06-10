@@ -1,19 +1,20 @@
 language: android
 android:
   components:
-    - tools
-    - platform-tools
-    - build-tools-23.0.3
-    - android-23
-
-    # Additional components
-    - extra-google-google_play_services
-    - extra-google-m2repository
-    - extra-android-m2repository
-    - extra-android-support
-
-    - add-on
-    - extra
-
-    # The SDK version used to compile your project
-    - android-23
+  - tools
+  - platform-tools
+  - build-tools-23.0.3
+  - android-23
+  - extra-google-google_play_services
+  - extra-google-m2repository
+  - extra-android-m2repository
+  - extra-android-support
+  - add-on
+  - extra
+  - android-23
+env:
+  global:
+  - secure: AiFX6+ZfU6r3Dok0wr6iQXESJI2mMuiqY0lkyaUrcwaw+Zr9/0MJiUS6xT2agJArdiSrAhRMRnoTkb//cHOS+qJnoX0InuthHTdMqSYRqmGIL9jHtxoEdPXhfNLPCEUjrlwdThW0WOttbSQM9cZsdup7y4OuEyU9XhNZkAZ12SphxWgIyGVCIYBfTEZWYk7Y2pHfo2ZKAGNQhiTVTBjBANpP8y8OcP6vSgLQzvbypIlKYDvejJnZ4F31Q9YOY+XMGjlSYlZNJId7lTcXrj4J5uFRpQ8jecVhQV0WaLiaZE8qENWyc8ThfN5i25CZU0eB+EZ+4X5zgbLqYnRuRCYP5vpjKE8DLRcmf0FlY20DeNV0b/Ci1EFT87mPAVYif1jplpFTkA7HykGFExPm+9fI0MdDL/kL9qYFqoF8ukvFLQaebsJr7fYacS5fK5S7p1mZWbNIBHzjLwpCvHChU15Wdy2UWCUqee7Hft4WApVY55bB72Ngl6R5c84ZvhRraCXC4vku3Ipg/0nxPhMUDw6S76fst1RHz6m7uLccfFNyO+Q9NnTBS60B+mWfSZKq1Fx+KE0PyUzTWcspk8JVe6MeWgiGd3HoGfxMFZUpZdbfShvZsyJDKPlo7U5+hoVGozoCQ/G+JSQzLMNXJmFvvWIIX4E7ZLwndddmNFHBO1V+Eq4=
+  - secure: F4B3vNDBnFvykTLOD2pX31Y541CwqMluMWHheoYw6F3VgRZEa8Y5Rfvxc0YOgb+OedOOCfdM6xOQjCbXtkiWbA+ZCKbwqZaE8WrtmbO4d6GDC9BM3ZkaZKwJSRup3kz/dPeSVuZis4qQYIOMpwCHt8pALv3bVtpT8UB2kSVBWpOGPLQTYcqmXD7FYhKhgn0TDs+fOUmTVQrMQvcfqSXgktuU2szkbGutITAJzCB7oWNPhrE+waxqzPxry2njgR31E9siX422GVx0kvALD4EzNyPq7wN3Jc2eQGFGo0A7SRyMLUUZqXjmvRDCDq9lqCqOY51z0amfsiE39t12caiTDBZ9iVo1OBr0xIhO1TleJxHegsPb+tfXLYb9pLsBa0N05VGavAuORH8ltR8VpMXb71da9N+gbYNlqqHvjDsuNeiPIpgbfwg5SY7Dtn3iy38pgIuanZEK4ovEQQaEw/5c0KIPttPo5AIRPTChIit3Wug/R3zoITl56ga/7nP4SryZmtAOBc5AcHP7kbaFkd0xVD3uzN3F4rn1z856x8Aaw1HuE/poO1cezbehJHQWpMQWLxlWAFSB8R86FprtKBdKmncoIuHz0aCovY5mAZo6C+WWkiW3iFPVpohzVOmnwLrs4xcfcLDX2gRjKwgB5jj5vjz4UZIq22XVFVTyFQA25ug=
+  - secure: jn81ZaawrgRciS2LOInMxVv+8QjUNMcsn+yxeJsL295Tk3TrdHzBm5NCBvCws14IPJX4jdiG1/eorEMsUslPbLE9+m2LEsIj6CUwzz/T1Vv8DfVvlTAFRrTUQDB21q71ZPyAsh9cf1o23WUMKkGCG08HUrbLmtolENyRVHrHntKqOIB0x4nqt0fWq9CD4pqd6Ztz/2l9+jf/5LykSar6M0P1bGIz5OUctLeVnTNjfNQJ0SybItS33XP76YOFaHZJDfYh16QPTrtmMemm/A+V3BewyZZpX6yu61WWBgMOxfuylrqzU+wVXMQ+7kuxEuH50iRtiZXzBqNH73pWAuwcs/8CNDSEVcFE31ca+VhlbMyi2gZODMJzjvPgV8JfWk6svTOFxb5fSPYWBLPUg40ttYW3/DQlz0NqOYmLHlu2HwDDi6TCLMnPocQ74/WI4Qol7vFLBKAKELWUZfT3E9DVKGQKQmo7oUqC8dUMoC2T4/Yr/2v8hIaFF3NczsAPYtqJyrumqq5psBmKq5dT926Dvc21vhuB1TKG14L0PFNBeIPK5DfO/PrCexKiMpa5Za01lSqX70RrxxP6Tr4XFKYgkIH/vJ2gp2Ubd67aO9UI3X2VnBNyvrwPJsoy9/YeKiwwhllJjabR2QcYIXI2pn6o7iWljUPuArNnzbHlmZZWtQE=
+  - secure: F8Hg4DeSIzDpyLxfkqMG+EU9qE35bs0FHihT2QsCJXvtaflIFuvF9kNljLHUPxhH/+q5ZGiryGC3Vz8TUwmJhcz0dCnkx1e5bvZcUfTHVekzJ9jWOSG2yN4eRIvIco/KAfDGrtxWcTC0ZJg3x/mthEzSOCsyNqI/vkf/ufwi8Y7RjAgcEEgREGbnKHoZSxgDwoZwaF07Qk+5+v4tA6qJsZSHkvDm2etqYDUdUKJKkdDbf+sUXSk0CusGOcL2glzLawt3huXtfBGznejemqxFYtYavNbEVghSI/A6JGs8ZgrNnjWVS5/3iNziAZQap0xJnEuS7dG/nW/fluA3Uetc/psg2t3dBEUgcFB1EjkPuE5CoP35sEfzUk1NO/pGVIopc2E7bp5+iQYiWnXboXCtefYJcmjwh61ehdYB+RaanoiFzxbHy6rzhRj3ZMmfkWw4AnnsY0TUegBpFmeaixurVEaAR9ZpZQmNdtXj+ECoJUXOPOhePO78Ckv+fREgd+FnytR2g3v4LDAQ6Zf7VeiN1pXymOH/CTe1eVjgY4HnQ5eaVBFlJChV9LLbxfHd/ypICmbA+pE9tA3A03KsAX/U0PBFUwiniyi98FUzXWlKDnOjHNS8ssjoEgvgmfaXVreX0vJ3nAp4GmkXmuQCbtfPRjpw6dsbvXDOI3i5Fiu+To0=
